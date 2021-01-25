@@ -1,1 +1,39 @@
+\section{Introduction}
+\label{sec:introduction}
+
 LAGraph is a library of Graph Algorithms based on the GraphBLAS
+
+Key contributions:
+
+\begin{itemize}
+    \item document design decisions for LAGraph
+    \item present a concise notation for \grb algorihms
+    \item algorithms of the GAP benchmark suite~\cite{DBLP:journals/corr/BeamerAP15} used in the IISWC benchmark paper~\cite{DBLP:conf/iiswc/AzadABBCDDDDFGG20}
+    \item improve data ingestion performance, e.g. using SIMD techniques~\cite{DBLP:journals/vldb/LangdaleL19}
+\end{itemize}
+
+Recently, numerous graph-specific have targeted GPUs such as Gunrock~\cite{DBLP:journals/topc/WangPDWYWOYLRO17} and \mbox{GraphBLAST}~\cite{DBLP:journals/corr/abs-1908-01407}, and FPGAs~\cite{DBLP:journals/corr/abs-1903-06697}.
+
+However, in the near future we expect even more heterogeneous hardware architectures including graph-specific hardware based on the Programmable Integrated Unified Memory Architecture (PIUMA)~\cite{DBLP:journals/corr/abs-2010-06277}.
+Additionally, graph processing workloads can be offloaded to  machine learning accelerators, \eg
+Tensor Processing Units (TPUs)~\cite{DBLP:conf/isca/JouppiYPPABBBBB17},
+systolic arrays using reconfigurable dataflow architecture~\cite{SambaNova},
+sparse linear algebra-based deep learning accelerators~\cite{Cerebras}.
+
+Previous \grb design papers:
+theory~\cite{DBLP:conf/hpec/MattsonBBBDFFGGHKLLPPRSWY13},
+C API~\cite{DBLP:conf/hpec/MattsonYMBM17},
+C++ API~\cite{DBLP:conf/ipps/BrockBMMM20},
+distributed API~\cite{DBLP:conf/ipps/BrockBMMMPSS20},
+LAGraph~\cite{DBLP:conf/ipps/MattsonDKBMMY19}
+
+\begin{lstlisting}[language=C, label=lst:example, caption=Example]
+int main() {
+    return 0; // return zero
+}
+\end{lstlisting}
+
+
+
+\footnote{A non peer-reviewed comparison of 6 popular graph algorithms libraries is available at
+\url{https://www.timlrx.com/blog/benchmark-of-popular-graph-network-packages-v2}.}

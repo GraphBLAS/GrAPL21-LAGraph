@@ -2,44 +2,98 @@
 %\IEEEoverridecommandlockouts
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 
-\usepackage{hyperref}
+\usepackage[hyphens]{url}
+\usepackage{hyperref} 
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage{etoolbox}
+\newbool{colored}
+\IfFileExists{./colored}{\booltrue{colored}}{\boolfalse{colored}}
+\newbool{ascii}
+\IfFileExists{./ascii}{\booltrue{ascii}}{\boolfalse{ascii}}
+
+\usepackage{subcaption}
+\usepackage{xspace}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{numprint}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{todonotes}
+\setuptodonotes{inline}
+
+\usetikzlibrary{positioning,fit,arrows.meta,backgrounds}
+
+% (Gabor) I usually write with frenchspacing on but turned it off now.
+% Caveat: With nonfrenchspacing, comments in algorithm2e use double-spacing after ':', '.', etc. which looks bad.
+% \frenchspacing
+
+% TODO: remove in submitted version
+\thispagestyle{plain}\pagestyle{plain}
+
+\input{algorithm-commands}
+
+\input{commands}
+\input{graphblas-commands}
+\input{listings}
 
 \begin{document}
 
-\title{LAGraph API}
+\title{LAGraph: A Graph Algorithm and Network Analysis Library for GraphBLAS}
 
 \author{
 \IEEEauthorblockN{
-    TODO
-% Tim Davis\IEEEauthorrefmark{2},   
-% Timothy G Mattson\IEEEauthorrefmark{8},
-% Scott McMillan\IEEEauthorrefmark{4},   
-% Gabor Szarnyas\IEEEauthorrefmark{9}, 
+    Timothy A. Davis\IEEEauthorrefmark{1},
+    Timothy G. Mattson\IEEEauthorrefmark{2},
+    James Kitchen\IEEEauthorrefmark{3},
+    Erik Welch\IEEEauthorrefmark{3},
+    Scott McMillan\IEEEauthorrefmark{4},
+    G\'abor Sz\'arnyas\IEEEauthorrefmark{5}
 }
 \IEEEauthorblockN{
-\IEEEauthorrefmark{2}Texas A\&M University,
-\IEEEauthorrefmark{4}Carnegie Mellon University,
-\IEEEauthorrefmark{8}Intel Corporation
+    \IEEEauthorrefmark{1}Texas A\&M University
+    \IEEEauthorrefmark{2}Intel Corporation
+    \IEEEauthorrefmark{3}Anaconda, Inc.
+    \IEEEauthorrefmark{4}Carnegie Mellon University
+    \IEEEauthorrefmark{5}CWI Amsterdam
 }
 }
 
 \maketitle
 
 \begin{abstract}
-TODO
+design decisions, GAP algorithms, ...
 \end{abstract}
 
 \begin{IEEEkeywords}
-graph algorithms, benchmarking 
+Graph Processing, Graph Algorithms, Graph Analytics, Linear Algebra, GraphBLAS
 \end{IEEEkeywords}
 
 \input{intro}
 
-test citation~\cite{GxBUserGuide}
+\input{fig-architecture}
+
+\input{design-decisions}
+
+\input{notation}
+
+\input{algorithms}
+
+
+\input{conclusion}
 
 \input{acknowledgements}
 
-\bibliographystyle{plain}
+\clearpage
+\bibliographystyle{IEEEtranS}
 \bibliography{ms}
 
 \end{document}
+
+% TODOs for the camera-ready
+% - make sure page numbering is turned off
+% - check whether GraphBLAS v2.0 is out
+% - check whether cited CoRR papers (PIUMA, GraphBLAST, FPGA survey, ...) have been accepted
+% 

@@ -1,0 +1,23 @@
+\tikzset{
+    module/.style={%
+        draw,
+        minimum width=50mm,
+        minimum height=8mm,
+        font=\sffamily,
+        node distance=0mm,
+        },
+    module/.default=0.5cm,
+    >=LaTeX
+}
+\begin{figure}[htb]
+    \centering
+    \begin{tikzpicture}
+        \node[module, minimum height=16mm, text depth=8mm] (I1) {Graph application};
+        \node[module, below=of I1, minimum width=30mm, xshift=10mm, yshift=8mm] (I2) {LAGraph};
+        \node[module, below=of I1, minimum width=60mm] (I3) {GraphBLAS API};
+        \node[module, below=of I3] (I4) {GraphBLAS implementation};
+        \node[module, below=of I4] (I5) {Hardware architecture};
+    \end{tikzpicture}
+    \caption{Separation of concerns using the \grb API.}
+    \label{fig:architecture}
+\end{figure}
