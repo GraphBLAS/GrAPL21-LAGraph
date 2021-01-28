@@ -1,4 +1,4 @@
-paper: gapBenchSC20.tex 
-	latexmk -pdf gapBenchSC20.tex -shell-escape
+paper: ms.tex 
+	latexmk -pdf ms.tex -shell-escape
 clean:
 	latexmk -C
