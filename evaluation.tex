@@ -5,7 +5,8 @@
 
 \subsection{SuiteSparse Extensions}
 
-In a prior paper (\cite{DBLP:conf/ppsc/ZhangAH20}), an early draft of
+
+In a prior paper (\cite{DBLP:conf/iiswc/AzadABBCDDDDFGG20}), an early draft of
 SuiteSparse:GraphBLAS v4.0.0 (Aug 2020) was compared with the GAP benchmark
 \cite{DBLP:conf/sc/BeamerAP12} and four other graph libraries.  This prior
 version of SS:GrB included two primary data structures for its sparse matrices:
@@ -130,7 +131,7 @@ TC SS        & 943.47    &  34.10    & 242.36     & 35.15   &     .29  \\
 With the simple addition of the bitmap (needed for the pull step), the
 push/pull optimization in BC resulted in a nearly 2x performance gain in the
 GraphBLAS method for the largest matrices, as compared to the SS:GrB version
-used for the results presented in \cite{DBLP:conf/ppsc/ZhangAH20}.
+used for the results presented in \cite{DBLP:conf/iiswc/AzadABBCDDDDFGG20}.
 
 With this change the BC method in LAGraph+SS:GrB is not only expressible in a
 simple, elegant code, but it is also faster than the highly-tuned GAP benchmark
