@@ -14,7 +14,7 @@ compressed sparse vector, and a hypersparse variant
 \cite{DBLP:conf/ipps/BulucG08}, both held by row or by column.  It included a
 draft implementation of a bitmap data structure that could only be used in a
 prototype breadth-first search.  Since then, SuiteSparse:GraphBLAS v4.0.3 has
-been released, with full support for bitmap and full matrices, for all its
+been released, with full support for bitmap and full matrices for all its
 operations.  In an $m$-by-$n$ bitmap matrix, the values are held in a full
 array of size $mn$, and another \verb'int8_t' array of size $mn$ holds the
 sparsity pattern of the matrix.  A full matrix is a simple dense array of size
@@ -22,33 +22,36 @@ $mn$.
 
 The bitmap format is particularly important for the ``pull'' phase of an
 algorithm, as used in direction-optimizing breadth-first-search
-\cite{DBLP:conf/sc/BeamerAP12}.  The GAP benchmark suite uses this method, by
-holding its frontier as a bitmap in the pull step and a as list in the push
-step. The GAP BFS was shown to be the fastest BFS amongst the methods compared
-in \cite{DBLP:conf/sc/BeamerAP12}.  With the addition of the bitmap format to
-SS:GrB, LAGraph+SS:GrB is able to come within a factor of 2 or so of the
-performance of the highly-tuned BFS GAP benchmark (see the results in the next
-section).  At the same time, however, the BFS is very easily expressed in an
-easy-to-read and easy-to-write code, enabling non-experts to obtain a
-reasonably high level of performance with modest programming effort.
+\cite{DBLP:conf/sc/BeamerAP12}.  The GAP benchmark suite uses this method by
+holding its frontier as a bitmap in the pull step and as a list in the push
+step. The GAP BFS was shown to be typically the fastest BFS amongst the 6 graph
+libraries compared in \cite{DBLP:conf/iiswc/AzadABBCDDDDFGG20} (for 4 of the 5
+benchmark graphs).  With the addition of the bitmap format to SS:GrB,
+LAGraph+SS:GrB is able to come within a factor of 2 or so of the performance of
+the highly-tuned BFS GAP benchmark (see the results in the next section), for
+those 4 graphs.  At the same time, however, the BFS is very easily expressed in
+LAGraph as an easy-to-read and easy-to-write code.  This enables non-experts to
+obtain a reasonably high level of performance with modest programming effort
+when writing their own graph algorithms.
 
 % TODO do I use the curly bracket notation since all masks are structural?
 
 Direction-optimization is incredibly simple to add to an LAGraph algorithm.
 For example, a batched direction-optimizing betweeness-centrality (BC)
-algorithm in LAGraph only requires code to determine which direction to use,
-followed by masked matrix-matrix multiplication $F \langle \tilde P \rangle
-=FB'$ (the pull) or $F \langle \tilde P \rangle =FA$ (the push), where $A$ is
-the adjancency matrix of the graph and $B=A'$ is its explicit transpose, $F$ is
-the frontier, and the complemented mask $\tilde P$ is the set of unvisited
-nodes.  The multiplication $FB'$ relies on the descriptor to represent the
-transpose of $B$, which is not explicitly transposed.  In the backward phase,
-the pull step is $W=WA'$ while the push is $W=WB$, where $W$ is the 4-by-$n$
-matrix in which centrality is accumulated.
+algorithm in LAGraph only requires a simple heuristic to determine which
+direction to use, followed by masked matrix-matrix multiplication with the
+matrix or its transpose: $F \langle \neg P \rangle =FB'$ (the pull) or $F
+\langle \neg P \rangle =FA$ (the push), where $A$ is the adjacency matrix of
+the graph and $B=A'$ is its explicit transpose, $F$ is the frontier, and the
+complemented mask $\neg P$ is the set of unvisited nodes.  The multiplication
+$FB'$ relies on the descriptor to represent the transpose of $B$, which is not
+explicitly transposed.  In the backward phase, the pull step is $W=WA'$ while
+the push is $W=WB$, where $W$ is the 4-by-$n$ matrix in which centrality is
+accumulated.
 
-Additional optimizations in SS:GrB in the past year include a {\em lazy sort}.
-Normally, SS:GrB keeps its vectors sorted (row vectors in a CSR matrix, or
-column vectors if the matrix is held by column), with entries sorted in
+Additional optimizations added to SS:GrB in the past year include a {\em lazy
+sort}.  Normally, SS:GrB keeps its vectors sorted (row vectors in a CSR matrix,
+or column vectors if the matrix is held by column), with entries sorted in
 ascending order of column or row index, respectively.  This simplifies the many
 algorithms that operate on a \verb'GrB_Matrix'.  However, some algorithms
 naturally produce a jumbled result (matrix multiply in particular), while many
@@ -64,7 +67,7 @@ it might never occur, which is the case for the LAGraph BFS.
 
 Another useful addition to SS:GrB is the new positional binary operators.
 The BFS relies on the ANY-SECONDI semiring to compute a single step,
-$q \langle \tilde \pi \rangle = q'A$, where $q$ is the current frontier
+$q \langle \neg \pi \rangle = q'A$, where $q$ is the current frontier
 $\pi$ is the parent vector, and $A$ is the adjacency matrix.
 
 Consider a matrix multiply for conventional linear algebra, where the PLUS
@@ -75,54 +78,77 @@ any one of the $t$ entries as the result $c_{ij}$.  The selection is done
 non-deterministically, allowing for a benign race condition.  In the BFS, this
 corresponds to selecting any valid parent of a newly discovered node.  Indeed,
 the creation of the ANY operator was inspired by Scott Beamer's \verb'bfs.cc'
-method in the GAP benchmark, which has the same benign race condition.
+method in the GAP benchmark, which has the same benign race condition.  The ANY
+monoid translates the concept of this benign race condition to construct a
+valid BFS tree into a linear algebraic operation, suitable for implementation
+in GraphBLAS.
 
 The SECONDI operator is the multiplicative operator in the ANY-SECONDI
 semiring, where the result of $a_{ik} b_{kj}$ is simply the index $k$ in the
 semiring for $C=AB$.  This gives the id of the parent node for a newly
-discovered node in the next frontier.
+discovered node in the next frontier.  The ANY monoid then selects any valid
+parent $k$.
 
 \subsection{Performance Results}
 
 Our benchmark environment is an NVIDIA DGX Station (donated to Texas A\&M by
-NVIDIA for this research).  It includes a 20-core Intel(R) Xeon(R) CPU E5-2698
-v4 @ 2.20GHz, with 40 threads, with gcc 5.4.0 -O3.  All default settings were
-used, which means that hyperthreading was enabled.  It is a single socket
-system (no NUMA effects) with 256GB RAM.  LAGraph (Jan 29, 2021) and
-SuiteSparse:GraphBLAS 4.0.3 (Jan 19, 2021) were used.
-The NVIDIA DGX Station includes four P100 GPUs, but no GPUs were used by
+NVIDIA in support of this research).  It includes a 20-core Intel(R) Xeon(R)
+CPU E5-2698 v4 @ 2.20GHz, with 40 threads.  All codes were compiled with gcc
+5.4.0 (-O3).  All default settings were used, which means that hyperthreading
+was enabled.  The system has 256GB of RAM in a single socket (no NUMA effects).
+LAGraph (Jan 29, 2021) and SuiteSparse:GraphBLAS 4.0.3 (Jan 19, 2021) were
+used.  The NVIDIA DGX Station includes four P100 GPUs, but no GPUs were used by
 this experiment (a GPU-accelerated SS:GrB is in progress).
 Table~\ref{table:results} lists the run time (in seconds) for the GAP benchmark
 and LAGraph+SS:GrB for the 6 algorithms on the 5 benchmark matrices.
+The benchmark matrices are listed in Table~\ref{table:matrices}.
 
 \begin{table}
 \begin{center}
 \begin{tabular}{|l|rrrrr|}
 \hline
-             &   \multicolumn{5}{c|}{graph, with run time in seconds}  \\
-Algorithm    &   Kron    &   Urand   &   Twitter  &  Web    &    Road  \\
+Algorithm :    &   \multicolumn{5}{c|}{graph, with run time in seconds}  \\
+ package       &   Kron    &   Urand   &   Twitter  &  Web    &    Road  \\
 \hline
-BC   GAP     &  31.52    &  46.36    &  10.82     &  3.01   &    1.50  \\
-BC   SS      &  26.85    &  31.78    &  10.04     &  9.25   &   51.91  \\
+BC   : GAP     &  31.52    &  46.36    &  10.82     &  3.01   &    1.50  \\
+BC   : SS      &  26.85    &  31.78    &  10.04     &  9.25   &   51.91  \\
 \hline
-BFS  GAP     &    .31    &    .58    &    .22     &   .34   &     .25  \\
-BFS  SS      &    .52    &   1.31    &    .33     &   .67   &    3.33  \\
+BFS  : GAP     &    .31    &    .58    &    .22     &   .34   &     .25  \\
+BFS  : SS      &    .52    &   1.31    &    .33     &   .67   &    3.33  \\
 \hline
-PR   GAP     &  19.81    &  25.29    &  15.16     &  5.13   &    1.01  \\
-PR   SS      &  21.96    &  27.75    &  17.22     &  9.30   &    1.34  \\
+PR   : GAP     &  19.81    &  25.29    &  15.16     &  5.13   &    1.01  \\
+PR   : SS      &  21.96    &  27.75    &  17.22     &  9.30   &    1.34  \\
 \hline
-CC   GAP     &    .53    &   1.66    &    .23     &   .22   &     .05  \\
-CC   SS      &   3.42    &   4.59    &   1.48     &  1.97   &    1.00  \\
+CC   : GAP     &    .53    &   1.66    &    .23     &   .22   &     .05  \\
+CC   : SS      &   3.42    &   4.59    &   1.48     &  1.97   &    1.00  \\
 \hline
-SSSP GAP     &   4.91    &   7.23    &   2.02     &   .81   &     .21  \\
-SSSP SS      &  17.62    &  25.62    &   8.44     &  9.67   &   48.49  \\
+SSSP : GAP     &   4.91    &   7.23    &   2.02     &   .81   &     .21  \\
+SSSP : SS      &  17.62    &  25.62    &   8.44     &  9.67   &   48.49  \\
 \hline
-TC GAP       & 374.08    &  21.83    &  79.58     & 22.18   &     .03  \\
-TC SS        & 943.47    &  34.10    & 242.36     & 35.15   &     .29  \\
+TC   : GAP     & 374.08    &  21.83    &  79.58     & 22.18   &     .03  \\
+TC   : SS      & 943.47    &  34.10    & 242.36     & 35.15   &     .29  \\
 \hline
 \end{tabular}
 \caption{Run time of GAP and LAGraph+SS:GrB
 \label{table:results}}
+\end{center}
+\end{table}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|rrr|}
+\hline
+graph   & nodes        & entries in $A$ & graph kind \\
+\hline
+Kron    & 134,217,726 &  4,223,264,644 &  undirected   \\
+Urand   & 134,217,728 &  4,294,966,740 &  undirected   \\
+Twitter &  61,578,415 &  1,468,364,884 &  directed     \\
+Web     &  50,636,151 &  1,930,292,948 &  directed     \\
+Road    &  23,947,347 &     57,708,624 &  directed     \\
+\hline
+\end{tabular}
+\caption{Benchmark matrices\label{table:matrices}
+(\url{https://sparse.tamu.edu/GAP})}
 \end{center}
 \end{table}
 
@@ -135,24 +161,25 @@ used for the results presented in \cite{DBLP:conf/iiswc/AzadABBCDDDDFGG20}.
 
 With this change the BC method in LAGraph+SS:GrB is not only expressible in a
 simple, elegant code, but it is also faster than the highly-tuned GAP benchmark
-method, \verb'bc.cc', for the three largest matrices.  As compared with the
-other 4 libraries in \cite{DBLP:conf/sc/BeamerAP12}, this means that
-LAGraph+SS:GrB is significantly faster than Galois for the Kron, Urand, and
-Twitter graphs, and on par with the BC methods of GKC and NWGraph.  The fourth
-package, GraphIt, had the fastest BC times for Kron and Urand, at roughly 2.2x
-and 2.7x faster than the GAP for Kron and Urand, respectively.  Of the five
+method, \verb'bc.cc', for the three largest matrices (1.2x for Kron, 1.5x for
+Urand, and 1.08x for Twitter).  Comparing with the other libraries benchmarked
+in \cite{DBLP:conf/iiswc/AzadABBCDDDDFGG20}, this implies that LAGraph+SS:GrB
+is significantly faster than Galois for the Kron, Urand, and Twitter graphs,
+and on par with the BC methods of GKC and NWGraph.  GraphIt had the fastest BC
+times for Kron and Urand, at roughly 2.2x and 2.7x faster than the GAP for Kron
+and Urand, respectively, so it is faster than LAGraph+SS:GrB.  Of the five
 packages, GraphIt had the fastest BC time on Twitter, being just barely faster
 than GAP (1.06x faster).  The results in Table~\ref{table:results} above show
 that LAGraph+SS:GrB is 1.08x faster than the GAP, on a different machine,
 putting it on par with GraphIt for this matrix.
 
 We expect the BC in LAGraph+SS:GrB to become faster still in the next
-release.  It does not yet fully exploit the lazy sort.  The frontier matrix $F$
-is left jumbled by the lazy sort, but it is sorted right away by a subsequent
-assignment.  Most uses of \verb'GrB_assign' are intolerant of jumbled input
-matrices, so it sorts them on input.  However, \verb'GrB_assign' includes
-about 40 internal variations, some of which do not actually require sorted
-input matrices.  The particular method used in \verb'GrB_assign' in the
+release because we have not yet fully exploited the lazy sort.  The frontier
+matrix $F$ is left jumbled by the lazy sort, but it is sorted right away by a
+subsequent assignment.  Most uses of \verb'GrB_assign' are intolerant of
+jumbled input matrices, so it sorts them on input.  However, \verb'GrB_assign'
+includes about 40 internal variations, a few of which do not actually require
+sorted input matrices.  The particular method used in \verb'GrB_assign' in the
 LAGraph BC method is one of those methods, so this would be simple to exploit.
 With this change, the sort would be so lazy that it would {\em never} occur.
 The frontier would be computed, left jumbled, used in subsequent computations,
@@ -167,17 +194,17 @@ the remaining 2x performance gap arises from two issues:
 
 \begin{enumerate}
 \item
-The GAP assumes that the graph has fewer than 4 billion nodes and edges, and
+The GAP assumes that the graph has fewer than $2^{32}$ nodes and edges, and
 thus uses 32-bit integers throughout.  GraphBLAS is written for larger
 problems, and thus relies solely on 64-bit integers.  This cannot be easily
-``fixed'' in GraphBLAS, but in some sense it is the GAP algorithm that would
-need to be updated in the future.  In the benchmark graphs, two graphs are
+changed in GraphBLAS, but rather than ``fixing'' GraphBLAS to use smaller
+integers, it is the GAP algorithms that would need to be updated for larger
+graphs in the future.  In the current GAP benchmark graphs, two graphs are
 chosen with almost exactly 4 billion edges.  Graphs of current interest in
-large data science can easiliy exceeed 4 billion nodes and edges
-\cite{9286235}.
+large data science can easily exceeed $2^{32}$ nodes and edges \cite{9286235}.
 
 \item In GraphBLAS, the BFS must be expressed as two calls.  The first computes
-$q \langle \tilde \pi \rangle = q'A$, and the second updates the parent vector,
+$q \langle \neg \pi \rangle = q'A$, and the second updates the parent vector,
 $ \pi \langle q \rangle = q$:
 
 {\footnotesize
@@ -196,21 +223,22 @@ intend to exploit this in the future.
 \end{enumerate}
 
 Note that LAGraph+SS:GrB is quite slow for many algorithms (all but PR) on the
-Road graph, however.  The primary reason for this is the high diameter of the
-Road graph (about 6000).  This requires 6000 iterations of GraphBLAS.  Each
-call to GraphBLAS does several \verb'malloc' and \verb'free's, and in some
-cases the workspace must be initialized.  A future version of SS:GrB is planned
-that will eliminate this work entirely, by exploiting an internal memory pool.
-There may be other overheads, but we hope that a memory pool, fusion to fully
-exploit non-blocking mode, and other optimization will address this large
-performance gap for the Road graph for these algorithms.
+Road graph.  The primary reason for this is the high diameter of the Road graph
+(about 6000).  This requires 6000 iterations of GraphBLAS in the BFS, each with
+a tiny amount of work.  Each call to GraphBLAS does several \verb'malloc' and
+\verb'free's, and in some cases the workspace must be initialized.  A future
+version of SS:GrB is planned that will eliminate this work entirely, by
+implementing an internal memory pool.  There may be other overheads, but we
+hope that a memory pool, fusion to fully exploit non-blocking mode, and other
+optimization will address this large performance gap for the Road graph for
+these algorithms.
 
 LAGraph+SS:GrB is also up to 3x slower than the GAP for the triangle counting
-problem (for all but the Road graph, where it is still slower).  This can
+problem (for all but the Road graph, where it is even slower).  This
 performance gap can be eliminated entirely in the future, if the \verb'GrB_mxm'
 and \verb'GrB_reduce' are combined in a single fused step, by a full
 exploitation of the GraphBLAS non-blocking mode.  The current method computes
 $C \langle L \rangle = LU'$, followed by the reduction of $C$ to a single
-scalar.  It would be quite simple to create a fused kernel that does not
-explicit instantiate the temporary matrix $C$.
+scalar.  The matrix $C$ is then discarded.  All that GraphBLAS needs is a fused
+kernel that does not explicitly instantiate the temporary matrix $C$.
 
