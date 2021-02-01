@@ -37,7 +37,7 @@ when writing their own graph algorithms.
 % TODO do I use the curly bracket notation since all masks are structural?
 
 Direction-optimization is incredibly simple to add to an LAGraph algorithm.
-For example, a batched direction-optimizing betweeness-centrality (BC)
+For example, a batched direction-optimizing betweenness-centrality (BC)
 algorithm in LAGraph only requires a simple heuristic to determine which
 direction to use, followed by masked matrix-matrix multiplication with the
 matrix or its transpose: $F \langle \neg P \rangle =FB'$ (the pull) or $F
