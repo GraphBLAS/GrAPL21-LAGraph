@@ -6,11 +6,172 @@
 We investigate the following design questions:
 
 \begin{itemize}
-    \item easy/expert mode or standard/advanced more
-    \item multi-threadable
-    \item data structure for representing a graph/matrix
+    \item data structure for representing a graph
+    \item basic/advanced mode
+    \item algorithm calling conventions
     \item error handling
-    \item opacity of LAGraph
+    \item user-contributed algorithms
+    \item ---------
     \item how to work around typecasting being expensive in GraphBLAS
     \item terminology: properties (parameters? features?)
+    \item multi-threadable
 \end{itemize}
+
+
+\subsection{Core data structure}
+The primary data structure in LAGraph is the \verb'LAGraph_Graph' which consists of primary components and cached properties.
+The data structure is not opaque, providing the user with full access to access and modify all internal components,
+unlike the way GraphBLAS objects behave.
+
+The primary components are a GraphBLAS matrix named \verb'A' and an enumeration name kind. The kind indicates how the matrix
+should be interpreted. Currently, the only allowed kinds are directed and undirected adjacency matrices, but more
+options will be added in the future.
+
+Cached properties include the transpose of \verb'A', the row degrees, column degrees, etc. They can be computed from the
+primary components, but doing so repeatedly for each algorithm utilizing A would be wasteful. Having them live inside
+the Graph object helps simplify algorithm call signatures. Utility functions exist to compute the cached properties.
+
+The following will compute the transpose of \verb'G->A' and store it as \verb'G->AT'.
+
+\begin{lstlisting}[language=C, label=lst:propertyat, caption=Utility to compute the transpose]
+LAGraph_Property_AT(G, msg);
+\end{lstlisting}
+
+Following this call, any algorithm which is given \verb'G' will have access to both \verb'A' and its transpose.
+
+Because the Graph object opaque, any piece of code may set the transpose as well. For instance, if an algorithm happens
+to compute the transpose as part of its logic, it could directly set \verb'G->AT'. The expectation is that the Graph object
+will always remain consistent. If \verb'G->A' is modified, all cached properties must be either modified to reflect the change
+or deleted. This expectation is a convention that all LAGraph algorithm implementers are expected to follow.
+Properties which are not known are set to \verb'NULL' or \verb'LAGRAPH_BOOLEAN_UNKNOWN' in the case of Boolean properties.
+
+Creating the Graph object is performed by calling
+
+\begin{lstlisting}[language=C, label=lst:lagraphnew, caption=Constructing an LAGraph_Graph object]
+LAGraph_Graph G;
+LAGraph_New(&G, &M, LAGRAPH_DIRECTED_ADJACENCY);
+\end{lstlisting}
+
+Following this call, \verb'M' will be \verb'NULL'. The matrix previously pointed by \verb'M' now lives at \verb'G->A'.
+This ``move'' constructor helps avoid memory freeing errors.
+
+
+\subsection{User modes}
+
+Algorithms in LAGraph target two types of user modes: Basic and Advanced. The Basic user mode is for those wanting
+things to ``just work'', are less concerned about performance, and may be less experienced with the library.
+The Advanced user mode is for those whose primary concern is performance and are willing to conform to stricter
+requirements to achieve that goal.
+
+Algorithms targeting the Basic mode typically have limited options. Often, there will only be one function for
+a given algorithm. Under the hood, that single algorithm might take different paths depending on the shape or
+size of the input graph. The idea is that a basic user wants to compute Pagerank or Betweenness Centrality,
+but doesn't want to have to understand the five different ways to compute them. They simply want the correct answer.
+
+Algorithms targeting the Advanced mode are often highly specialized implementations of an algorithm. The Advanced
+mode user is expected to understand details such as push-pull and batch mode and why different techniques are
+better for each graph. Advanced mode algorithms are very strict in their input. If the input doesn't match the
+expected kind, an error will be raised.
+
+Advanced mode algorithms will also raise an error if a cached property is needed by an algorithm, but is not
+currently available on the Graph object. While Basic mode algorithms are free to compute and cache properties
+on the Graph object, Advanced mode algorithms never will. The idea is to never surprise the user with unexpected
+additional computation. An Advanced mode user must opt-in to all computations.
+
+Often, Basic mode algorithms will inspect the input, possibly compute properties or transform the data,
+and finally call one of the Advanced mode algorithms to do the actual work on the graph. Having these two user
+modes allows LAGraph to target a wider range of users who vary in their experience with graph algorithms.
+
+
+\subsection{Algorithm calling conventions}
+
+Algorithms in LAGraph follow a general calling convention.
+
+\begin{lstlisting}[language=C, label=lst:algorithmcallingconvention, caption=Calling convention in LAGraph]
+int algorithm
+(
+    // outputs:
+    TYPE *out1,
+    TYPE *out2,
+    ...
+    // input/output
+    TYPE inout,
+    ...
+    // inputs
+    TYPE input1,
+    TYPE input2,
+    ...
+    // error message holder
+    char *msg
+)
+\end{lstlisting}
+
+The return value is always an int with the following meaning:
+
+\begin{itemize}
+    \item =0 -> success
+    \item <0 -> error
+    \item >0 -> warning
+\end{itemize}
+
+The meaning of a given error or warning is algorithm-specific
+and should be listed in the documentation for the algorithm.
+
+Outputs appear first and are passed by reference. A pointer should be created by the caller, but
+memory will be allocated by the algorithm. If the output is not needed, a \verb'NULL' is passed and the
+algorithm will not return that output.
+
+Input/Output arguments are passed by value. The expectation is that the object will be modified.
+This supports things like batch mode in which a frontier is updated and returned to the caller.
+It also supports Basic mode algorithms which may modify a Graph object by adding cached properties.
+
+Inputs are passed by value and should never be changed by the algorithm.
+
+The final argument of any LAGraph algorithm is the error message holder. This must be \verb'char[]' of
+size \verb'LAGRAPH_MSG_LEN'. When the algorithm returns an error or a warning, a message may be placed in
+this array as additional information. Because the caller creates this array, the caller must free
+the memory or reuse it as appropriate. If the algorithm is successful, it should fill the message array
+with an empty string to clear any previous message.
+
+
+\subsection{Error handling}
+
+Because every algorithm in LAGraph can return an error, the return value of every call should be
+checked before proceeding. To make this less burdensome for a C-based library, LAGraph provides a
+convenience macro which works similar to try/catch in other languages.
+
+\begin{lstlisting}[language=C, label=lst:lagraphtrycatch, caption=Try/Catch LAGraph Utility]
+#define LAGraph_TRY(LAGraph_method)
+{
+    int LAGraph_status = LAGraph_method;
+    if (LAGraph_status < 0)
+    {
+        LAGraph_CATCH (LAGraph_status);
+    }
+}
+\end{lstlisting}
+
+
+\verb'LAGraph_CATCH' can be defined before an algorithm and will be called in the event of an error.
+This allows for proper freeing of memory and other necessary tasks.
+
+A similar macro, \verb'GrB_TRY', will call \verb'GrB_CATCH' when making GraphBLAS calls which return
+a \verb'GrB_Info' value other than \verb'GrB_SUCCESS' or \verb'GrB_NO_VALUE'.
+
+\verb'LAGraph_TRY' and \verb'GrB_TRY' provide an easy to use and easy to read method for dealing with
+error checking while writing graph algorithms.
+
+
+\subsection{Contributing algorithms}
+
+The LAGraph project welcomes contributions from all graph practitioners who see the GraphBLAS vision
+of using the language of linear algebra to express graph computations. However, as a matter of
+practical concern, users want a stable experience when using LAGraph for doing real work. To balance
+these, the LAGraph repository will have both a stable and an experimental folder.
+
+New algorithms or modifications of existing algorithms will first be added to the experimental folder.
+The release schedule will generally be much faster than the stable release and there is no expectation
+of a bug-free experience. The goal is to generate lots of ideas and allow uninhibited contributions to
+push the boundary of what is possible with GraphBLAS. The stable release will be fully tested and
+will move much slower, targeting the needs of those who want to use LAGraph as a complete, production-grade
+library rather than as a research project.
