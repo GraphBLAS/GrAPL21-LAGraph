@@ -126,6 +126,9 @@ sympy-plots-for-*.tex/
 # xindy
 *.xdy
 
+# JetBrains
+.idea/
+
 # WinEdt
 *.bak
 *.sav
