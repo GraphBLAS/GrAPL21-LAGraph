@@ -12,6 +12,7 @@ jobs:
         uses: xu-cheng/latex-action@master
         with:
           root_file: ms.tex
+          args: -pdf -latexoption=-file-line-error -latexoption=-interaction=nonstopmode -latexoption=-shell-escape
       - name: Install and Build 🔧
         run: |
           mkdir build
