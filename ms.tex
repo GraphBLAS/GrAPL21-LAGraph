@@ -30,6 +30,18 @@
 % Caveat: With nonfrenchspacing, comments in algorithm2e use double-spacing after ':', '.', etc. which looks bad.
 % \frenchspacing
 
+% (Scott) I usually use the minted package for code blocks configured as follows
+% You put code inside \begin{cplus} \end{cplus}
+\usepackage{minted}
+\setminted{fontsize=\footnotesize,baselinestretch=.97,linenos,frame=lines,xleftmargin=6pt,numbersep=3pt,mathescape=true,escapeinside=||,bgcolor=bg}
+\usemintedstyle{default}
+\definecolor{bg}{rgb}{0.97,0.97,0.97}
+\newminted{cpp}{}
+\newenvironment{cplus}{\VerbatimEnvironment\begin{cppcode}}{\end{cppcode}}
+\newmintinline[cplusinl]{cpp}{}
+
+
+
 % TODO: remove in submitted version
 \thispagestyle{plain}\pagestyle{plain}
 
