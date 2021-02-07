@@ -170,7 +170,7 @@ simple, elegant code, but it is also faster than the highly-tuned GAP benchmark
 method, \verb'bc.cc', for the three largest matrices (1.2x for Kron, 1.5x for
 Urand, and 1.08x for Twitter).
 
-% Feb6 update:  the sort is now as lazy as I can make it.  I still have to
+% Feb6 update:  the sort is now lazier.  I still have to
 % sort because of a place where C<M>=T is done with M and T both sparse,
 % in the backtrack phase (W<S[i]>=bc_update./paths).  The frontier S[i] still
 % needs sorting, and T = <S[i]>bc_update./paths constructs a jumbled T.
