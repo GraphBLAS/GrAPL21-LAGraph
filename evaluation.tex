@@ -96,7 +96,7 @@ NVIDIA in support of this research).  It includes a 20-core Intel(R) Xeon(R)
 CPU E5-2698 v4 @ 2.20GHz, with 40 threads.  All codes were compiled with gcc
 5.4.0 (-O3).  All default settings were used, which means that hyperthreading
 was enabled.  The system has 256GB of RAM in a single socket (no NUMA effects).
-LAGraph (Jan 29, 2021) and SuiteSparse:GraphBLAS 4.0.3 (Jan 19, 2021) were
+LAGraph (Feb 7, 2021) and SuiteSparse:GraphBLAS 4.0.4-draft (Feb 7, 2021) were
 used.  The NVIDIA DGX Station includes four P100 GPUs, but no GPUs were used by
 this experiment (a GPU-accelerated SS:GrB is in progress).
 Table~\ref{table:results} lists the run time (in seconds) for the GAP benchmark
@@ -168,15 +168,12 @@ used for the results presented in \cite{DBLP:conf/iiswc/AzadABBCDDDDFGG20}.
 
 With this change the BC method in LAGraph+SS:GrB is not only expressible in a
 simple, elegant code, but it is also faster than the highly-tuned GAP benchmark
-method, \verb'bc.cc', for the three largest matrices (1.2x for Kron, 1.5x for
-Urand, and 1.08x for Twitter).
+method, \verb'bc.cc', for the three largest matrices (1.3x for Kron, 1.5x for
+Urand, and 1.2x for Twitter).
 
-% Feb6 update:  the sort is now lazier.  I still have to
-% sort because of a place where C<M>=T is done with M and T both sparse,
-% in the backtrack phase (W<S[i]>=bc_update./paths).  The frontier S[i] still
-% needs sorting, and T = <S[i]>bc_update./paths constructs a jumbled T.
-% I need to try to wait(S[i]) before this step; then I need only 1 sort.
+% Feb7 update:  the sort is completely lazy.
 
+% For the Jan26 results:
 % We expect the BC in LAGraph+SS:GrB to become faster still in the next
 % release because we have not yet fully exploited the lazy sort.  The frontier
 % matrix $F$ is left jumbled by the lazy sort, but it is sorted right away by a
@@ -245,4 +242,6 @@ exploitation of the GraphBLAS non-blocking mode.  The current method computes
 $C \langle L \rangle = LU'$, followed by the reduction of $C$ to a single
 scalar.  The matrix $C$ is then discarded.  All that GraphBLAS needs is a fused
 kernel that does not explicitly instantiate the temporary matrix $C$.
+This is permitted by the GraphBLAS C API Specification, but not yet implemented
+in SS:GrB.
 
