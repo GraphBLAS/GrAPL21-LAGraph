@@ -111,22 +111,28 @@ Algorithm :    &   \multicolumn{5}{c|}{graph, with run time in seconds}  \\
  package       &   Kron    &   Urand   &   Twitter  &  Web    &    Road  \\
 \hline
 BC   : GAP     &  31.52    &  46.36    &  10.82     &  3.01   &    1.50  \\
-BC   : SS      &  26.85    &  31.78    &  10.04     &  9.25   &   51.91  \\
+BC   : Jan26   &  26.85    &  31.78    &  10.04     &  9.25   &   51.91  \\
+BC   : Feb6    &  24.75    &  30.66    &   9.28     &  8.97   &   43.66  \\
 \hline
 BFS  : GAP     &    .31    &    .58    &    .22     &   .34   &     .25  \\
-BFS  : SS      &    .52    &   1.31    &    .33     &   .67   &    3.33  \\
+BFS  : Jan26   &    .52    &   1.31    &    .33     &   .67   &    3.33  \\
+BFS  : Feb6    &    .52    &   1.20    &    .33     &   .66   &    3.36  \\
 \hline
 PR   : GAP     &  19.81    &  25.29    &  15.16     &  5.13   &    1.01  \\
-PR   : SS      &  21.96    &  27.75    &  17.22     &  9.30   &    1.34  \\
+PR   : Jan26   &  21.96    &  27.75    &  17.22     &  9.30   &    1.34  \\
+PR   : Feb6    &  21.67    &  27.60    &  17.14     &  9.34   &    1.32  \\
 \hline
 CC   : GAP     &    .53    &   1.66    &    .23     &   .22   &     .05  \\
-CC   : SS      &   3.42    &   4.59    &   1.48     &  1.97   &    1.00  \\
+CC   : Jan26   &   3.42    &   4.59    &   1.48     &  1.97   &    1.00  \\
+CC   : Feb6    &   3.35    &   4.56    &   1.47     &  1.96   &     .97  \\
 \hline
 SSSP : GAP     &   4.91    &   7.23    &   2.02     &   .81   &     .21  \\
-SSSP : SS      &  17.62    &  25.62    &   8.44     &  9.67   &   48.49  \\
+SSSP : Jan26   &  17.62    &  25.62    &   8.44     &  9.67   &   48.49  \\
+SSSP : Feb6    &  17.58    &  25.60    &   8.18     &  9.60   &   48.24  \\
 \hline
 TC   : GAP     & 374.08    &  21.83    &  79.58     & 22.18   &     .03  \\
-TC   : SS      & 943.47    &  34.10    & 242.36     & 35.15   &     .29  \\
+TC   : Jan26   & 943.47    &  34.10    & 242.36     & 35.15   &     .29  \\
+TC   : Feb6    & 922.35    &  33.97    & 238.71     & 34.67   &     .23  \\
 \hline
 \end{tabular}
 \caption{Run time of GAP and LAGraph+SS:GrB
@@ -164,18 +170,24 @@ simple, elegant code, but it is also faster than the highly-tuned GAP benchmark
 method, \verb'bc.cc', for the three largest matrices (1.2x for Kron, 1.5x for
 Urand, and 1.08x for Twitter).
 
-We expect the BC in LAGraph+SS:GrB to become faster still in the next
-release because we have not yet fully exploited the lazy sort.  The frontier
-matrix $F$ is left jumbled by the lazy sort, but it is sorted right away by a
-subsequent assignment.  Most uses of \verb'GrB_assign' are intolerant of
-jumbled input matrices, so it sorts them on input.  However, \verb'GrB_assign'
-includes about 40 internal variations, a few of which do not actually require
-sorted input matrices.  The particular method used in \verb'GrB_assign' in the
-LAGraph BC method is one of those methods, so this would be simple to exploit.
-With this change, the sort would be so lazy that it would {\em never} occur.
-The frontier would be computed, left jumbled, used in subsequent computations,
-and then recomputed (and thus discarded), just as we currently do in the
-LAGraph BFS.
+% Feb6 update:  the sort is now as lazy as I can make it.  I still have to
+% sort because of a place where C<M>=T is done with M and T both sparse,
+% in the backtrack phase (W<S[i]>=bc_update./paths).  The frontier S[i] still
+% needs sorting, and T = <S[i]>bc_update./paths constructs a jumbled T.
+% I need to try to wait(S[i]) before this step; then I need only 1 sort.
+
+% We expect the BC in LAGraph+SS:GrB to become faster still in the next
+% release because we have not yet fully exploited the lazy sort.  The frontier
+% matrix $F$ is left jumbled by the lazy sort, but it is sorted right away by a
+% subsequent assignment.  Most uses of \verb'GrB_assign' are intolerant of
+% jumbled input matrices, so it sorts them on input.  However, \verb'GrB_assign'
+% includes about 40 internal variations, a few of which do not actually require
+% sorted input matrices.  The particular method used in \verb'GrB_assign' in the
+% LAGraph BC method is one of those methods, so this would be simple to exploit.
+% With this change, the sort would be so lazy that it would {\em never} occur.
+% The frontier would be computed, left jumbled, used in subsequent computations,
+% and then recomputed (and thus discarded), just as we currently do in the
+% LAGraph BFS.
 
 With the addition of bitmap format (which makes push/pull optimization very
 simple to express, and very fast) and the ANY-SECONDI semiring, the BFS of a
