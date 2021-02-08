@@ -19,26 +19,56 @@ We investigate the following design questions:
 
 
 \subsection{Core data structure}
+
+\begin{listing}
+\begin{cplus}
+typedef struct LAGraph_Graph_struct
+{
+    GrB_Matrix   A;      // adjacency matrix of the graph
+    LAGraph_Kind kind;   // kind of graph: directed, etc.
+    
+    // cached properties
+    GrB_Matrix   AT;     // transpose of A
+    GrB_Vector   row_degree;
+    GrB_Vector   col_degree;
+    LAGraph_BooleanProperty A_pattern_is_symmetric;
+    int64_t      ndiag;  // -1 if unknown
+} *LAGraph_Graph;
+
+typedef struct LAGraph_Graph_struct *LAGraph_Graph;
+
+// creating a graph
+GrB_Matrix M;
+// ...construction of M omitted
+
+LAGraph_Graph G;
+LAGraph_New(&G, &M, LAGRAPH_DIRECTED_ADJACENCY);
+
+// operating on properties
+LAGraph_Property_AT(G, msg);  // compute/cache
+\end{cplus}
+\caption{{\tt LAGraph\_Graph} data structure and methods.}
+\label{Lst.graph}
+\end{listing}
+
 The primary data structure in LAGraph is the \verb'LAGraph_Graph' which consists of primary components
 and cached properties. The data structure is not opaque, providing the user with full access to access and
-modify all internal components, unlike the way GraphBLAS objects behave.
+modify all internal components, unlike the way GraphBLAS objects behave.  This data structure is 
+shown at the top of Listing~\ref{Lst.graph} and defined ultimately on line~14.
 
-The primary components are a GraphBLAS matrix named \verb'A' and an enumeration \verb'kind'.
+The primary components of this struct are a GraphBLAS matrix named \verb'A' and an enumeration \verb'kind'.
 The kind indicates how the matrix should be interpreted.
-Currently, the only kinds defined are \verb'LAGRAPH_ADJACENCY_UNDIRECTED' and \verb'LAGRAPH_ADJACENCY_DIRECTED',
-but more options will be added in the future.
+Currently, the only kinds defined are \verb'LAGRAPH_ADJACENCY_UNDIRECTED' and 
+\verb'LAGRAPH_ADJACENCY_DIRECTED', but more options will be added in the future.  Creating the 
+Graph object is performed on line~21 of Listing~\ref{Lst.graph}
+Following this call, \verb'M' will be \verb'NULL'. The matrix previously pointed to by \verb'M' now
+lives at \verb'G->A'. This ``move'' constructor helps avoid memory freeing errors.
 
 Cached properties include the transpose of \verb'A', the row degrees, column degrees, etc.
 They can be computed from the primary components, but doing so repeatedly for each algorithm
 utilizing \verb'A' would be wasteful. Having them live inside the Graph object helps simplify
-algorithm call signatures. Utility functions exist to compute each cached property.
-
-The following will compute the transpose of \verb'G->A' and store it as \verb'G->AT'.
-
-\begin{lstlisting}[language=C, label=lst:propertyat, caption=Utility to compute the transpose]
-LAGraph_Property_AT(G, msg);
-\end{lstlisting}
-
+algorithm call signatures. Utility functions exist to compute each cached property.  For example,
+line~24 of Listing~\ref{Lst.graph} will compute the transpose of \verb'G->A' and store it as \verb'G->AT'.
 Following this call, any algorithm which is given \verb'G' will have access to both \verb'A' and its transpose.
 
 Because the Graph object is opaque, any piece of code may set the transpose as well. For instance, if an algorithm
@@ -48,15 +78,6 @@ If \verb'G->A' is modified, all cached properties must be either be set as unkno
 Properties which are not known are set to \verb'NULL' or \verb'LAGRAPH_BOOLEAN_UNKNOWN' in the case of Boolean properties.
 This expectation is a convention that all LAGraph algorithm implementers are expected to follow.
 
-Creating the Graph object is performed by
-
-\begin{lstlisting}[language=C, label=lst:lagraphnew, caption=Constructing an LAGraph\_Graph object]
-LAGraph_Graph G;
-LAGraph_New(&G, &M, LAGRAPH_DIRECTED_ADJACENCY);
-\end{lstlisting}
-
-Following this call, \verb'M' will be \verb'NULL'. The matrix previously pointed to by \verb'M' now
-lives at \verb'G->A'. This ``move'' constructor helps avoid memory freeing errors.
 
 
 \subsection{User modes}
@@ -90,7 +111,7 @@ modes allows LAGraph to target a wider range of users who vary in their experien
 
 Algorithms in LAGraph follow a general calling convention.
 
-\begin{lstlisting}[language=C, label=lst:algorithmcallingconvention, caption=Calling convention in LAGraph]
+\begin{cplus}
 int algorithm
 (
     // outputs:
@@ -107,7 +128,7 @@ int algorithm
     // error message holder
     char *msg
 )
-\end{lstlisting}
+\end{cplus}
 
 The return value is always an int with the following meaning:
 
@@ -143,7 +164,7 @@ Because every algorithm in LAGraph can return an error, the return value of ever
 checked before proceeding. To make this less burdensome for a C-based library, LAGraph provides a
 convenience macro which works similar to try/catch in other languages.
 
-\begin{lstlisting}[language=C, label=lst:lagraphtrycatch, caption=LAGraph Try/Catch Utility Macro]
+\begin{cplus}
 #define LAGraph_TRY(LAGraph_method)
 {
     int LAGraph_status = LAGraph_method;
@@ -152,7 +173,7 @@ convenience macro which works similar to try/catch in other languages.
         LAGraph_CATCH (LAGraph_status);
     }
 }
-\end{lstlisting}
+\end{cplus}
 
 
 \verb'LAGraph_CATCH' can be defined before an algorithm and will be called in the event of an error.

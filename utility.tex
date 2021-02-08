@@ -1,13 +1,25 @@
 \section{Utility Fuctions}
 \label{sec:utility}
 
-sort, diag/invdiag (?)
-
-graph query: equal/isall
-
-memory mmgt
-
-threading
-
-IO, binary format
+Here is a rough categorization of the utilities (not all included yet)
+\begin{itemize}
+\item {\bf Helpers:} TRY/CATCH, MIN/MAX, tic/toc, TypeName, KindName
+\item {\bf Memory management:} malloc, calloc, realloc, free stuff.  This might be covered in the design decisions section
+\item {\bf Threading:} Get/SetNumThreads. Shouldn’t this be part of init, or an LAGraph\_Context?  Should this also be discussed in design decisions.  GraphBLAS threading is one thing, but this seems to be LAGraph threading (outside of GraphBLAS calls).  I could see this as algorithm specific and not a general util.  The only way to leverage these inside algorithms is to either set a global property that all algorithms have access to, or creating a context that is passed to algorithms.
+\item {\bf Graph Properties:} If they operate on the LAGraph\_Graph cached properties consider a consistent naming scheme like LAGraph\_Property\_XXX
+\begin{itemize}
+  \item DeleteProperties (consider Property\_ClearAll), Property\_AT, Property\_AssymetricPattern, Property\_RowDegree, Property\_ColDegree
+  \item CheckGraph (consider Property\_Check)  check what?
+  \item SortByDegree, SampleDegree  (maybe belongs grouped here as it is computing properties, but maybe not cached
+\end{itemize}
+\item {\bf Graph I/O:} BinRead, MMRead (we are missing BinWrite, MMWrite), DisplayGraph (is this a pretty print of the matrix or all the properties, this should also take FILE*)
+\item {\bf Graph ops:} Pattern (MakePattern, GetPattern).  Not sure how to categorize these
+\item {\bf Graph query}: IsEqual, IsAll. Are these graph or matrix utils? IsAll is an ambiguous (maybe misleading) name because it seems to be a generic comparator (consider CompareGraphs).
+\item {\bf Consider for removal} Things that may be implementation detail and could be buried:
+\begin{itemize}
+  \item Sort1/2/3 - currently only Sort2 is used.  I don't see a strong need to include these as part of the public API at this time.
+  \item Random15/60 - I see Random64 being the most widely usable. These can easily be buried as well, and I would still suggest Random64 (Random60 seems too SuiteSparse:GraphBLAS specific.
+  \item Test\_ReadProblem (move to the TestArea)
+\end{itemize}
+\end{itemize}
 
