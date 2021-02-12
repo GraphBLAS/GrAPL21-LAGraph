@@ -64,12 +64,11 @@
 
     \newcommand{\grboperationnoarg}[1]{\mathtt{#1}}
 
-    \newcommand{\grbewiseadd}[1]{\ #1[intersection]\ }
-    \newcommand{\grbewisemult}[1]{\ #1[union]\ }
+    \newcommand{\grbewiseadd}[1]{\grbbinaryop{#1[intersection]}}
+    \newcommand{\grbewisemult}[1]{\grbbinaryop{#1[union]}}
 }{ % LaTeX mode ===================================================================================
     \newcommand{\grbm}[1]{{\ifbool{colored}{\color{brown}}{}{\mathbf{#1}}}}% matrix
     \newcommand{\grbv}[1]{{\ifbool{colored}{\color{lilac}}{}{\mathbf{#1}}}}% vector
-    %\newcommand{\grba}[1]{{\ifbool{colored}{\color{gray}}{}{\boldsymbol{#1}}}}% array
     \newcommand{\grba}[1]{{\ifbool{colored}{\color{gray}}{}{\textbf{\textit{#1}}}}}% array
     \newcommand{\grbs}[1]{{\ifbool{colored}{\color{blue}}{}{\mathit{#1}}}}% scalar
 
@@ -125,8 +124,8 @@
 
     \newcommand{\grboperationnoarg}[1]{\mathrm{#1}}
 
-    \newcommand{\grbewiseadd}[1]{#1_\cup}
-    \newcommand{\grbewisemult}[1]{#1_\cap}
+    \newcommand{\grbewiseadd}[1]{\grbbinaryop{#1_\cup}}
+    \newcommand{\grbewisemult}[1]{\grbbinaryop{#1_\cap}}
 }
 
 % do not lange/rangle for tuples as it is already used for masks
@@ -162,7 +161,7 @@
 \newcommand{\grbsecondmax}{\grbsemiringops{second}{max}}
 \newcommand{\grbarithmeticplustimes}{\grbsemiringops{plus}{times}} % not necessary because this is the default
 
-\newcommand{\grbbinaryop}[1]{\mathop{\grboperator{#1}}}
+\newcommand{\grbbinaryop}[1]{\mathbin{\grboperator{#1}}}
 \newcommand{\grbany}{\grbbinaryop{any}}
 \newcommand{\grbpair}{\grbbinaryop{pair}}
 \newcommand{\grbland}{\grbbinaryop{land}}
