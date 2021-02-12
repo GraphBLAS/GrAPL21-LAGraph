@@ -60,7 +60,7 @@ The primary components of this struct are a GraphBLAS matrix named \verb'A' and 
 The kind indicates how the matrix should be interpreted.
 Currently, the only kinds defined are \verb'LAGRAPH_ADJACENCY_UNDIRECTED' and 
 \verb'LAGRAPH_ADJACENCY_DIRECTED', but more options will be added in the future.  Creating the 
-Graph object is performed on Line~\ref{line:CreateGraphObject} of Listing~\ref{Lst.graph}
+Graph object is performed on Line~\ref{line:CreateGraphObject} of Listing~\ref{Lst.graph}.
 Following this call, \verb'M' will be \verb'NULL'. The matrix previously pointed to by \verb'M' now
 lives at \verb'G->A'. This ``move'' constructor helps avoid memory freeing errors.
 
@@ -89,7 +89,7 @@ requirements to achieve that goal.
 
 Algorithms targeting the Basic mode typically have limited options. Often, there will only be one function for
 a given algorithm. Under the hood, that single algorithm might take different paths depending on the shape or
-size of the input graph. The idea is that a basic user wants to compute Pagerank or Betweenness Centrality,
+size of the input graph. The idea is that a basic user wants to compute PageRank or Betweenness Centrality,
 but doesn't want to have to understand the five different ways to compute them. They simply want the correct answer.
 
 Algorithms targeting the Advanced mode are often highly specialized implementations of an algorithm. The Advanced

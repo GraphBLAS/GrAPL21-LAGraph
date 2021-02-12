@@ -22,7 +22,7 @@ $mn$.
 
 The bitmap format is particularly important for the ``pull'' phase of an
 algorithm, as used in direction-optimizing breadth-first-search
-\cite{DBLP:conf/sc/BeamerAP12}.  The GAP benchmark suite uses this method by
+\cite{DBLP:conf/sc/BeamerAP12,DBLP:conf/icpp/YangBO18}.  The GAP benchmark suite uses this method by
 holding its frontier as a bitmap in the pull step and as a list in the push
 step. The GAP BFS was shown to be typically the fastest BFS amongst the 6 graph
 libraries compared in \cite{DBLP:conf/iiswc/AzadABBCDDDDFGG20} (for 4 of the 5
@@ -34,19 +34,17 @@ LAGraph as an easy-to-read and easy-to-write code.  This enables non-experts to
 obtain a reasonably high level of performance with modest programming effort
 when writing their own graph algorithms.
 
-% TODO do I use the curly bracket notation since all masks are structural?
-
 Direction-optimization is incredibly simple to add to an LAGraph algorithm.
 For example, a batched direction-optimizing betweenness-centrality (BC)
 algorithm in LAGraph only requires a simple heuristic to determine which
 direction to use, followed by masked matrix-matrix multiplication with the
-matrix or its transpose: $F \langle \neg P \rangle =FB'$ (the pull) or $F
-\langle \neg P \rangle =FA$ (the push), where $A$ is the adjacency matrix of
-the graph and $B=A'$ is its explicit transpose, $F$ is the frontier, and the
-complemented mask $\neg P$ is the set of unvisited nodes.  The multiplication
-$FB'$ relies on the descriptor to represent the transpose of $B$, which is not
-explicitly transposed.  In the backward phase, the pull step is $W=WA'$ while
-the push is $W=WB$, where $W$ is the 4-by-$n$ matrix in which centrality is
+matrix or its transpose: $\grbm{F} \grbmask{\grbneg \grbstr{\grbm{P}}} = \grbm{F}\grbm{B}\grbt$ (the pull) or $\grbm{F}
+\grbmask{\grbneg \grbstr{\grbm{P}}} = \grbm{F} \grbm{A}$ (the push), where $A$ is the adjacency matrix of
+the graph and $\grbm{B} = \grbm{A}\grbt$ is its explicit transpose, $\grbm{F}$ is the frontier, and the
+complemented structural mask $\grbneg \grbstr{\grbm{P}}$ is the set of unvisited nodes.  The multiplication
+$\grbm{F} \grbm{B}\grbt$ relies on the descriptor to represent the transpose of $\grbm{B}$, which is not
+explicitly transposed.  In the backward phase, the pull step is $\grbm{W} = \grbm{W} \grbm{A}\grbt$ while
+the push is $\grbm{W} = \grbm{W} \grbm{B}$, where $\grbm{W}$ is the 4-by-$n$ matrix in which centrality is
 accumulated.
 
 Additional optimizations added to SS:GrB in the past year include a {\em lazy
@@ -57,7 +55,8 @@ algorithms that operate on a \verb'GrB_Matrix'.  However, some algorithms
 naturally produce a jumbled result (matrix multiply in particular), while many
 algorithms are tolerant of jumbled input matrices.  We thus allow the sort to
 be left pending.  The lazy sort joins two other kinds of pending work in
-SS:GrB: {\em pending tuples}, and {\em zombies}.  A pending tuple is an entry
+SS:GrB: {\em pending tuples} and {\em zombies}~\cite{DBLP:journals/toms/Davis19}.
+A pending tuple is an entry
 that is held inside a matrix in an unsorted list, awaiting insertion into the
 CSR/CSC format of a \verb'GrB_Matrix'.  A zombie is the opposite: it is an
 entry in the CSR/CSC format that has been marked for deletion, but has not yet
@@ -66,27 +65,31 @@ another algorithm requires sorted input matrices.  If the sort is lazy enough,
 it might never occur, which is the case for the LAGraph BFS.
 
 Another useful addition to SS:GrB is the new positional binary operators.
-The BFS relies on the ANY-SECONDI semiring to compute a single step,
-$q \langle \neg \pi \rangle = q'A$, where $q$ is the current frontier
-$\pi$ is the parent vector, and $A$ is the adjacency matrix.
+The BFS relies on the $\grbanysecondi$ %ANY-SECONDI
+semiring to compute a single step,
+$\grbv{q} \grbmask{\grbneg \grbstr{\grbv{\pi}}} = \grbv{q}\grbt\grbm{A}$, where $\grbv{q}$ is the current frontier
+$\grbv{\pi}$ is the parent vector, and $\grbm{A}$ is the adjacency matrix.
 
-Consider a matrix multiply for conventional linear algebra, where the PLUS
+Consider a matrix multiply for conventional linear algebra, where the $\grbplus$ %PLUS
 monoid sums a set of $t$ entries to obtain a single scalar for computing
-$c_{ij} = \sum a_{ik} b_{kj}$ in the matrix multiply $C=AB$.  The ANY monoid
-performs the reduction of $t$ entries to a single number by merely selecting
+$c_{ij} = \sum a_{ik} b_{kj}$ in the matrix multiply $\grbm{C} = \grbm{A}\grbm{B}$.  The $\grbany$ %ANY
+monoid performs the reduction of $t$ entries to a single number by merely selecting
 any one of the $t$ entries as the result $c_{ij}$.  The selection is done
 non-deterministically, allowing for a benign race condition.  In the BFS, this
 corresponds to selecting any valid parent of a newly discovered node.  Indeed,
-the creation of the ANY operator was inspired by Scott Beamer's \verb'bfs.cc'
-method in the GAP benchmark, which has the same benign race condition.  The ANY
+the creation of the $\grbany$ %ANY
+operator was inspired by Scott Beamer's \verb'bfs.cc'
+method in the GAP benchmark, which has the same benign race condition.  The $\grbany$ %ANY
 monoid translates the concept of this benign race condition to construct a
 valid BFS tree into a linear algebraic operation, suitable for implementation
 in GraphBLAS.
 
-The SECONDI operator is the multiplicative operator in the ANY-SECONDI
+The $\grbsecondi$ %SECONDI
+operator is the multiplicative operator in the $\grbanysecondi$ %ANY-SECONDI
 semiring, where the result of $a_{ik} b_{kj}$ is simply the index $k$ in the
-semiring for $C=AB$.  This gives the id of the parent node for a newly
-discovered node in the next frontier.  The ANY monoid then selects any valid
+semiring for $\grbm{C} = \grbm{A}\grbm{B}$.  This gives the id of the parent node for a newly
+discovered node in the next frontier.  The $\grbany$ %ANY
+monoid then selects any valid
 parent $k$.
 
 \subsection{Performance Results}
@@ -176,7 +179,7 @@ Urand, and 1.2x for Twitter).
 % For the Jan26 results:
 % We expect the BC in LAGraph+SS:GrB to become faster still in the next
 % release because we have not yet fully exploited the lazy sort.  The frontier
-% matrix $F$ is left jumbled by the lazy sort, but it is sorted right away by a
+% matrix $\grbm{F}$ is left jumbled by the lazy sort, but it is sorted right away by a
 % subsequent assignment.  Most uses of \verb'GrB_assign' are intolerant of
 % jumbled input matrices, so it sorts them on input.  However, \verb'GrB_assign'
 % includes about 40 internal variations, a few of which do not actually require
@@ -188,7 +191,8 @@ Urand, and 1.2x for Twitter).
 % LAGraph BFS.
 
 With the addition of bitmap format (which makes push/pull optimization very
-simple to express, and very fast) and the ANY-SECONDI semiring, the BFS of a
+simple to express, and very fast) and the $\grbanysecondi$ %ANY-SECONDI
+semiring, the BFS of a
 directed or undirected graph is easily expressed in GraphBLAS, and has a
 performance that is only about 2x slower than the GAP benchmark.  We expect
 the remaining 2x performance gap arises from two issues:
@@ -205,8 +209,8 @@ chosen with almost exactly 4 billion edges.  Graphs of current interest in
 large data science can easily exceeed $2^{32}$ nodes and edges \cite{9286235}.
 
 \item In GraphBLAS, the BFS must be expressed as two calls.  The first computes
-$q \langle \neg \pi \rangle = q'A$, and the second updates the parent vector,
-$ \pi \langle q \rangle = q$:
+$\grbv{q} \grbmask{\grbneg \grbv{\pi}} = \grbv{q}\grbt \grbm{A}$, and the second updates the parent vector,
+$ \grbv{\pi} \grbmask{\grbstr{\grbv{q}}} = \grbv{q}$:
 
 {\footnotesize
 \begin{verbatim}
@@ -239,9 +243,9 @@ problem (for all but the Road graph, where it is even slower).  This
 performance gap can be eliminated entirely in the future, if the \verb'GrB_mxm'
 and \verb'GrB_reduce' are combined in a single fused step, by a full
 exploitation of the GraphBLAS non-blocking mode.  The current method computes
-$C \langle L \rangle = LU'$, followed by the reduction of $C$ to a single
-scalar.  The matrix $C$ is then discarded.  All that GraphBLAS needs is a fused
-kernel that does not explicitly instantiate the temporary matrix $C$.
+$\grbm{C} \grbmask{\grbstr{\grbm{L}}} = \grbm{L}\grbm{U}\grbt$, followed by the reduction of $\grbm{C}$ to a single
+scalar.  The matrix $\grbm{C}$ is then discarded.  All that GraphBLAS needs is a fused
+kernel that does not explicitly instantiate the temporary matrix $\grbm{C}$.
 This is permitted by the GraphBLAS C API Specification, but not yet implemented
 in SS:GrB.
 
