@@ -35,17 +35,17 @@ typedef struct LAGraph_Graph_struct
     int64_t      ndiag;  // -1 if unknown
 } *LAGraph_Graph;
 
-typedef struct LAGraph_Graph_struct *LAGraph_Graph;
+typedef struct LAGraph_Graph_struct *LAGraph_Graph; |$\label{line:LAGraph_Graph}$|
 
 // creating a graph
 GrB_Matrix M;
 // ...construction of M omitted
 
 LAGraph_Graph G;
-LAGraph_New(&G, &M, LAGRAPH_DIRECTED_ADJACENCY);
+LAGraph_New(&G, &M, LAGRAPH_DIRECTED_ADJACENCY); |$\label{line:CreateGraphObject}$|
 
 // operating on properties
-LAGraph_Property_AT(G, msg);  // compute/cache
+LAGraph_Property_AT(G, msg);  |$\label{line:ComputeTranspose}$|// compute/cache
 \end{cplus}
 \caption{{\tt LAGraph\_Graph} data structure and methods.}
 \label{Lst.graph}
@@ -54,13 +54,13 @@ LAGraph_Property_AT(G, msg);  // compute/cache
 The primary data structure in LAGraph is the \verb'LAGraph_Graph' which consists of primary components
 and cached properties. The data structure is not opaque, providing the user with full access to access and
 modify all internal components, unlike the way GraphBLAS objects behave.  This data structure is 
-shown at the top of Listing~\ref{Lst.graph} and defined ultimately on line~14.
+shown at the top of Listing~\ref{Lst.graph} and defined ultimately on Line~\ref{line:LAGraph_Graph}.
 
 The primary components of this struct are a GraphBLAS matrix named \verb'A' and an enumeration \verb'kind'.
 The kind indicates how the matrix should be interpreted.
 Currently, the only kinds defined are \verb'LAGRAPH_ADJACENCY_UNDIRECTED' and 
 \verb'LAGRAPH_ADJACENCY_DIRECTED', but more options will be added in the future.  Creating the 
-Graph object is performed on line~21 of Listing~\ref{Lst.graph}
+Graph object is performed on Line~\ref{line:CreateGraphObject} of Listing~\ref{Lst.graph}
 Following this call, \verb'M' will be \verb'NULL'. The matrix previously pointed to by \verb'M' now
 lives at \verb'G->A'. This ``move'' constructor helps avoid memory freeing errors.
 
@@ -68,7 +68,7 @@ Cached properties include the transpose of \verb'A', the row degrees, column deg
 They can be computed from the primary components, but doing so repeatedly for each algorithm
 utilizing \verb'A' would be wasteful. Having them live inside the Graph object helps simplify
 algorithm call signatures. Utility functions exist to compute each cached property.  For example,
-line~24 of Listing~\ref{Lst.graph} will compute the transpose of \verb'G->A' and store it as \verb'G->AT'.
+Line~\ref{line:ComputeTranspose} of Listing~\ref{Lst.graph} will compute the transpose of \verb'G->A' and store it as \verb'G->AT'.
 Following this call, any algorithm which is given \verb'G' will have access to both \verb'A' and its transpose.
 
 Because the Graph object is opaque, any piece of code may set the transpose as well. For instance, if an algorithm
