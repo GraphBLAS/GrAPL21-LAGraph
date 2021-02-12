@@ -1,29 +1,48 @@
 \section{Algorithms}
 \label{sec:algorithms}
 
-GAP algorithms: BFS, SSSP, TC, BC, PR. Not sure whether CC should be included.
-
 \subsection{BFS}
 
 push/pull~\cite{DBLP:conf/icpp/YangBO18}
 
-GraphBLAST stores both directions and picks automatically~\cite{DBLP:journals/corr/abs-1908-01407}
+\footnote{Certain \grb libraries, \eg GraphBLAST, store both directions and perform direction-optimization automatically~\cite{DBLP:journals/corr/abs-1908-01407}}
+
+\input{algorithms/bfs}
+
+\autoref{alg:bfs-parents} and \autoref{alg:bfs-parents-do}
 
 \subsection{Betweenness Centrality}
 
-also does push/pull
+\input{algorithms/bc}
+
+\autoref{alg:bc}
+
+also does push/pull as discussed in \autoref{sec:extensions}
 
 \subsection{PageRank}
 
 % The PR in GAP does not work well if there are dangling vertices in the graph.
 % The Graphalytics benchmark has a PageRank variant which avoids this problem~\cite{DBLP:journals/corr/abs-2011-15028}.
 
+\input{algorithms/pagerank}
+
+\autoref{alg:pagerank}
+
+
 \subsection{SSSP}
+
+\input{algorithms/sssp-delta-stepping}
+
+\autoref{alg:sssp-delta-stepping}
 
 \subsection{Triangle Count}
 
-(Not too interesting from an API design point of view.)
+\input{algorithms/triangle-count}
+
+\autoref{alg:triangle-count-sandiadot}
 
 \subsection{Connected Components}
 
-Needs a few GxB extensions.
+\input{algorithms/fastsv}
+
+\autoref{alg:fastsv}

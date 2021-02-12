@@ -1,0 +1,36 @@
+\begin{algorithm}[htb]
+	\caption{Parents BFS.}
+	\label{alg:bfs-parents}
+	\DontPrintSemicolon
+	\KwIn{$\grbm{A}, \grbs{n}, \grbs{startVertex}$}
+	\Fn{ParentsBFS}{
+		$\grbv{f}(\grbs{startVertex}) = 0$ \;
+
+		\For{$\grblevel = 1$ \KwTo $\grbs{n}-1$}{
+			$\grbv{p} \grbmask{\grbv{f}} = \grbtrue $\; %\grbv{f}$ \;
+
+			$\grbv{f} \grbmaskreplace{\grbneg \grbv{p}} = \grbv{f} \grbanysecondione \grbmA$ \;
+		}
+	}
+\end{algorithm}
+
+\begin{algorithm}[htb]
+	\caption{Direction Optimizing Parent BFS.}
+	\label{alg:bfs-parents-do}
+	\DontPrintSemicolon
+	\KwIn{$\grbm{A}, \grbm{A}\grbt, \grbs{n}, \grbs{startVertex}$}
+	\Fn{DirectionOptimizingBFS}{
+		$\grbv{f}(\grbs{startVertex}) = 0$ \;
+
+		\For{$\grblevel = 1$ \KwTo $\grbs{n}-1$}{
+			$\grbv{p} \grbmask{\grbv{f}} = \grbtrue$ \;
+
+			\If{$\mathit{Push}(\grbmA, \grbv{f})$}{ %\Comment*{Decide to push/pull}
+				$\grbv{f} \grbmaskreplace{\grbneg \grbstr{\grbv{p}}} = \grbv{f} \grbanysecondione \grbmA$
+			}
+			\Else{
+				$\grbv{f} \grbmaskreplace{\grbneg \grbstr{\grbv{p}}} = \grbmA\grbt \grbanysecondione \grbv{f}$
+			}
+		}
+	}
+\end{algorithm}

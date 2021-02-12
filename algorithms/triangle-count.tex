@@ -1,0 +1,11 @@
+\begin{algorithm}[htb]
+	\caption{Triangle count (``SandiaDot'' variant).}
+	\label{alg:triangle-count-sandiadot}
+	%\KwData{...}
+	%\KwResult{...}
+	\Fn{TriangleCount}{
+		$\grbm{L} = \grbtril{\grbm{A}}$ \;
+		$\grbm{C}\grbmask{\grbm{L}} = \grbm{L} \grbplustimes \grbm{L}$ \;
+		$\grbs{t} = \grbreduce{\grbplus}{\grbs{i}\grbs{j}}{\grbm{C}}{\grbs{i}, \grbs{j}}$ \;
+	}
+\end{algorithm}

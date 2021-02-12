@@ -13,4 +13,16 @@
 \SetKw{Break}{break}
 
 % https://tex.stackexchange.com/a/260697
-\newcommand{\lstnumberautorefname}{Line}
+% \newcommand{\lstnumberautorefname}{Line} % unused as we use minted
+
+\renewcommand{\algorithmautorefname}{Alg.}
+% https://tex.stackexchange.com/a/351229
+\makeatletter
+\patchcmd{\ALG@step}{\addtocounter{ALG@line}{1}}{\refstepcounter{ALG@line}}{}{}
+\newcommand{\ALG@lineautorefname}{Line}
+\makeatother
+% to comply with IEEEtran's recommendation
+\renewcommand{\figureautorefname}{Fig.}
+\renewcommand{\sectionautorefname}{Sec.}
+\renewcommand{\subsectionautorefname}{Sec.}
+\renewcommand{\subsubsectionautorefname}{Sec.}
