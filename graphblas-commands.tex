@@ -16,7 +16,7 @@
 % by the lack of protection (\protect). Anyways, the workaround is actually cleaner.
 
 %\newcommand{\grbreduce}[2]{\left[{#1}_j \, {#2}(:, j) \right]}
-\ifbool{ascii}{
+\ifbool{ascii}{ % ASCII mode ======================================================================
     \newcommand{\grbm}[1]{{\ifbool{colored}{\color{brown}}{}{\mathtt{#1}}}}% matrix
     \newcommand{\grbv}[1]{{\ifbool{colored}{\color{lilac}}{}{\mathtt{#1}}}}% vector
     \newcommand{\grba}[1]{{\ifbool{colored}{\color{gray}}{}{\mathtt{#1}}}}% array
@@ -32,7 +32,8 @@
     \newcommand{\grbt}{\texttt{'}} % transpose
     \newcommand{\grbdiv}{\grbbinaryop{DIV}}
     \newcommand{\grbminus}{\grbbinaryop{MINUS}}
-    \newcommand{\grbaccumeq}[1]{\mathbin{\texttt{\ensuremath{\ifstrempty{#1}{+}{#1}=}}}}
+    \newcommand{\grbaccum}{\texttt{\ensuremath{+}}}
+    \newcommand{\grbaccumeq}[1]{\mathbin{\texttt{\ensuremath{\ifstrempty{#1}{\grbaccum}{#1}=}}}}
 
     \newcommand{\grbplus}{\grbbinaryop{+}}
     \newcommand{\grbtimes}{\grbbinaryop{\times}}
@@ -62,15 +63,21 @@
     \newcommand{\grbdontcare}{\_}
 
     \newcommand{\grboperationnoarg}[1]{\mathtt{#1}}
-}{ % LaTeX mode
+
+    \newcommand{\grbewiseadd}[1]{\ #1[intersection]\ }
+    \newcommand{\grbewisemult}[1]{\ #1[union]\ }
+}{ % LaTeX mode ===================================================================================
     \newcommand{\grbm}[1]{{\ifbool{colored}{\color{brown}}{}{\mathbf{#1}}}}% matrix
     \newcommand{\grbv}[1]{{\ifbool{colored}{\color{lilac}}{}{\mathbf{#1}}}}% vector
-    \newcommand{\grba}[1]{{\ifbool{colored}{\color{gray}}{}{ \mathit{#1} }}}% array
-    \newcommand{\grbs}[1]{{\ifbool{colored}{\color{blue}}{}{ \mathit{#1} }}}% scalar
+    %\newcommand{\grba}[1]{{\ifbool{colored}{\color{gray}}{}{\boldsymbol{#1}}}}% array
+    \newcommand{\grba}[1]{{\ifbool{colored}{\color{gray}}{}{\textbf{\textit{#1}}}}}% array
+    \newcommand{\grbs}[1]{{\ifbool{colored}{\color{blue}}{}{\mathit{#1}}}}% scalar
 
-    \newcommand{\grbstr}[1]{{\{#1\}}}
     \newcommand{\grbmask}[1]{\langle #1 \rangle}
-    \newcommand{\grbmaskreplace}[1]{\langle\!\langle #1 \rangle\!\rangle}
+    %\newcommand{\grbstr}[1]{{\{#1\}}}
+    \newcommand{\grbstr}[1]{s(#1)}
+    %\newcommand{\grbmaskreplace}[1]{\langle\!\langle #1 \rangle\!\rangle}
+    \newcommand{\grbmaskreplace}[1]{\langle #1, \mathrm{r} \rangle}
     \newcommand{\grbneg}{\neg}
 
     % use the \mapsfrom symbol extracted from the stix package as suggested in https://tex.stackexchange.com/a/331899/71109
@@ -86,7 +93,8 @@
     \newcommand{\grbt}{^\mathsf{T}} %^{\top}} % transpose
     \newcommand{\grbdiv}{\grbbinaryop{\oslash}}
     \newcommand{\grbminus}{\grbbinaryop{\ominus}}
-    \newcommand{\grbaccumeq}[1]{\mathbin{\ensuremath{\ifstrempty{#1}{\odot}{#1}\!\!=}}}
+    \newcommand{\grbaccum}{\texttt{\ensuremath{\odot}}}
+    \newcommand{\grbaccumeq}[1]{\mathbin{\ensuremath{\ifstrempty{#1}{\grbaccum}{#1}\!\!=}}}
 
     \newcommand{\grbplus}{\oplus}
     \newcommand{\grbtimes}{\otimes}
@@ -115,9 +123,11 @@
     \newcommand{\grbrange}[2]{#1 \! : \! #2}
     \newcommand{\grbdontcare}{\textvisiblespace}
 
-    \newcommand{\grboperationnoarg}[1]{\textit{#1}}
-}
+    \newcommand{\grboperationnoarg}[1]{\mathrm{#1}}
 
+    \newcommand{\grbewiseadd}[1]{#1_\cup}
+    \newcommand{\grbewisemult}[1]{#1_\cap}
+}
 
 % do not lange/rangle for tuples as it is already used for masks
 % do not use grbtuple for the time being
@@ -177,6 +187,8 @@
 \newcommand{\grbplustext}{\grbbinaryop{plus}}
 \newcommand{\grbtimestext}{\grbbinaryop{times}}
 
+\newcommand{\grbgenericop}{\grboperator{op}}
+
 % boolean values
 \newcommand{\grbbooleanvalue}[1]{\mathtt{#1}}
 \newcommand{\grbtrue}{\grbbooleanvalue{TRUE}}
@@ -189,32 +201,6 @@
 % cardinality / count
 \newcommand{\grbcnt}[1]{| #1 |}
 
-\newcommand{\grbeWiseAdd}[1]{\underset{\raisebox{.4ex}{$\scriptscriptstyle\cup$}}{#1}}
-\newcommand{\grbeWiseMult}[1]{\underset{\raisebox{.4ex}{$\scriptscriptstyle\cap$}}{#1}}
-
-% C<M> += A +.* B
-%\newcommand{\grbmult}[6]{#1{#2} \ #3\!= #5 #4 #6}
-
-% stock matrices
-\newcommand{\grbmA}{\grbm{A}}
-\newcommand{\grbmB}{\grbm{B}}
-\newcommand{\grbmC}{\grbm{C}}
-\newcommand{\grbmM}{\grbm{M}}
-% stock vectors
-\newcommand{\grbvu}{\grbv{u}}
-\newcommand{\grbvv}{\grbv{v}}
-\newcommand{\grbvw}{\grbv{w}}
-\newcommand{\grbvm}{\grbv{m}}
-% stock scalars
-\newcommand{\grbsi}{\grbs{i}}
-\newcommand{\grbsj}{\grbs{j}}
-\newcommand{\grbsn}{\grbs{n}}
-\newcommand{\grbss}{\grbs{s}}
-% stock arrays
-\newcommand{\grbaI}{\grba{I}}
-\newcommand{\grbaJ}{\grba{J}}
-\newcommand{\grbaX}{\grba{X}}
-
 % operations
 \newcommand{\grboperation}[2]{\grboperationnoarg{#1}(#2)}
 \newcommand{\grbnrows}[1]{\grboperation{nrows}{#1}}
@@ -222,35 +208,11 @@
 \newcommand{\grbnvals}[1]{\grboperation{nvals}{#1}}
 \newcommand{\grbclear}[1]{\grboperation{clear}{#1}}
 \newcommand{\grbdiag}[1]{\grboperation{diag}{#1}}
-\newcommand{\grbselect}[1]{\grboperation{select}{#1}}
+\newcommand{\grbselect}[1]{\grbmask{#1}}
 \newcommand{\grbkron}[1]{\grboperation{kron}{#1}}
 \newcommand{\grbtril}[1]{\grboperation{tril}{#1}}
 \newcommand{\grbtriu}[1]{\grboperation{triu}{#1}}
 \newcommand{\grbondiag}[1]{\grboperation{ondiag}{#1}}
 \newcommand{\grboffdiag}[1]{\grboperation{offdiag}{#1}}
 
-% bfs
-\newcommand{\grbFrontier}{\grbm{Frontier}}
-\newcommand{\grbNext}{\grbm{Next}}
-\newcommand{\grbSeen}{\grbm{Seen}}
-
-\newcommand{\grbsource}{\grbs{s}}
-\newcommand{\grbfrontier}{\grbv{frontier}}
-\newcommand{\grbnext}{\grbv{next}}
-\newcommand{\grbseen}{\grbv{seen}}
-\newcommand{\grblevel}{\grbs{level}}
-
-\newcommand{\grbfrontieri}{\grbv{frontier1}}
-\newcommand{\grbnexti}{\grbv{next1}}
-\newcommand{\grbseeni}{\grbv{seen1}}
-
-\newcommand{\grbfrontierii}{\grbv{frontier2}}
-\newcommand{\grbnextii}{\grbv{next2}}
-\newcommand{\grbseenii}{\grbv{seen2}}
-
-\newcommand{\bfsfrontier}{\grbv{frontier}}
-\newcommand{\bfsnext}{\grbv{next}}
-\newcommand{\bfsseen}{\grbv{seen}}
-
-\newcommand{\atom}[1]{\mathsf{#1}}
 \newcommand{\grbind}[1]{\mathrm{ind}(#1)}
