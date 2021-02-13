@@ -4,14 +4,14 @@
 	%\KwData{...}
 	%KwResult{...}
 	\Fn{FastSV}{
-        $\grbsn = \grbnrows{\grbmA}$ \;
+        $\grbs{n} = \grbnrows{\grbm{A}}$ \;
         $\grbv{gf} = \grbv{f}$ \;
         $\grbv{dup} = \grbv{gf}$ \;
         $\grbv{mngf} = \grbv{gf}$ \;
         $\{ \grba{i}, \grba{x} \} \grbassign \grbv{f}$ \;
         \Repeat{$\grbs{sum} == 0$}{
             \Comment{Step 1: Stochastic hooking}
-            $\grbv{mngf} = \grbv{mngf} \grbmin \grbmA $ \;
+            $\grbv{mngf} = \grbv{mngf} \grbmin \grbm{A} $ \;
             $\grbv{mngf} = \grbv{mngf} \grbsecondmin \grbv{gf}$ \;
             $\grbv{f}(\grba{x}) = \grbv{f} \grbmin \grbv{mngf} $ \;
             \Comment{Step 2: Aggressive hooking}
@@ -23,7 +23,7 @@
             $\grbv{gf} = \grbv{f}(\grba{x})$ \;
             \Comment{Step 5: Check termination}
             $\grbv{diff} = \grbv{dup} \neq \grbv{gf} $ \; % \neq or 'isne'?
-            $\grbs{sum} = [\grbplus_{\grbsi} \grbv{diff}(\grbsi) ] $ \;
+            $\grbs{sum} = [\grbplus_{\grbs{i}} \grbv{diff}(\grbs{i}) ] $ \;
             $\grbv{dup} = \grbv{gf}$ \; %LAGRAPH_OK (GrB_assign (dup, 0, 0, gp, GrB_ALL, 0, 0));
         }
 	}

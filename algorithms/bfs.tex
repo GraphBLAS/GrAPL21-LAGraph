@@ -6,9 +6,9 @@
 	\Fn{ParentsBFS}{
 		$\grbv{p}(\grbs{startVertex}) = \grbs{startVertex}$ \;
 		$\grbv{q}(\grbs{startVertex}) = \grbs{startVertex}$ \;
-
-		\For{$\grblevel = 1$ \KwTo $\grbs{n}-1$}{
-			$\grbv{q} \grbmaskreplace{\grbneg \grbstr{\grbv{p}}} = \grbv{q} \grbanysecondi \grbmA$ \;
+		\todo{use do-while loop with nvals > 0?}
+		\For{$\grbs{level} = 1$ \KwTo $\grbs{n}-1$}{
+			$\grbv{q} \grbmaskreplace{\grbneg \grbstr{\grbv{p}}} = \grbv{q} \grbanysecondi \grbm{A}$ \;
 			$\grbv{p} \grbmask{\grbstr{\grbv{q}}} = \grbv{q}$ \;
 			\todo{add break condition}
 		}
@@ -26,12 +26,12 @@
 		$\grbv{q}(\grbs{startVertex}) = 0$ \;
 		\todo{sync notation with basic BFS}
 
-		\For{$\grblevel = 1$ \KwTo $\grbs{n}-1$}{
-			\If{$\mathit{Push}(\grbmA, \grbv{q})$}{ %\Comment{Decide to push/pull}
-				$\grbv{q} \grbmaskreplace{\grbneg \grbstr{\grbv{p}}} = \grbv{q} \grbanysecondi \grbmA$
+		\For{$\grbs{level} = 1$ \KwTo $\grbs{n}-1$}{
+			\If{$\mathit{Push}(\grbm{A}, \grbv{q})$}{ %\Comment{Decide to push/pull}
+				$\grbv{q} \grbmaskreplace{\grbneg \grbstr{\grbv{p}}} = \grbv{q} \grbanysecondi \grbm{A}$
 			}
 			\Else{
-				$\grbv{q} \grbmaskreplace{\grbneg \grbstr{\grbv{p}}} = \grbmA\grbt \grbanysecondi \grbv{q}$
+				$\grbv{q} \grbmaskreplace{\grbneg \grbstr{\grbv{p}}} = \grbm{A}\grbt \grbanysecondi \grbv{q}$
 			}
 			$\grbv{p} \grbmask{\grbstr{\grbv{q}}} = \grbv{q}$ \;
 		}

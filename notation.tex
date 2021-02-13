@@ -26,34 +26,34 @@ there are variations based on
 (2)~how the elements outside the selected ones are treated (they are \emph{replaced} with implicit zeros or they are kept intact and \emph{merged} with the results of the computation)
 
 by default, masks should use \emph{merge} semantics, i.e. the computation can only effect elements selected by the mask, elements outside the mask are unaffected
-$\grbvw\grbmask{\grbv{m}}$ and $\grbvw\grbmask{\grbneg \grbv{m}}$
+$\grbv{w}\grbmask{\grbv{m}}$ and $\grbv{w}\grbmask{\grbneg \grbv{m}}$
 
 \emph{replace} semantics, i.e. they annihilate all elements outside the mask. this is denoted with
-$\grbvw\grbmaskreplace{\grbv{m}}$ and $\grbvw\grbmaskreplace{\grbneg \grbv{m}}$
+$\grbv{w}\grbmaskreplace{\grbv{m}}$ and $\grbv{w}\grbmaskreplace{\grbneg \grbv{m}}$
 
 by default, element values in the mask are checked and elements with zero value are not used
 to avoid this, we use \emph{structural masks}
-$\grbvw\grbmask{\grbstr{\grbv{m}}}$ and $\grbvw\grbmask{\grbneg \grbstr{\grbv{m}}}$
+$\grbv{w}\grbmask{\grbstr{\grbv{m}}}$ and $\grbv{w}\grbmask{\grbneg \grbstr{\grbv{m}}}$
 
 Combining \emph{replace semantics} and \emph{structural masks} is possible:
-$\grbvw\grbmaskreplace{\grbstr{\grbv{m}}}$
-$\grbvw\grbmaskreplace{\grbneg \grbstr{\grbv{m}}}$
+$\grbv{w}\grbmaskreplace{\grbstr{\grbv{m}}}$
+$\grbv{w}\grbmaskreplace{\grbneg \grbstr{\grbv{m}}}$
 
 
 % \begin{tabular}{ll}
-%     $\grbvw\grbmask{\grbv{m}}$                 & compute for nodes selected by the values of $\grbv{m}$ & keep       \\
-%     $\grbvw\grbmaskreplace{\grbv{m}}$          & compute for nodes selected by the values in $\grbv{m}$ & discard  \\
-%     $\grbvw\grbmask{\grbstr{\grbv{m}}}$        & compute for nodes selected by the pattern of $\grbv{m}$ & keep      \\
-%     $\grbvw\grbmaskreplace{\grbstr{\grbv{m}}}$ & compute for nodes selected by the pattern of $\grbv{m}$ & discard \\
+%     $\grbv{w}\grbmask{\grbv{m}}$                 & compute for nodes selected by the values of $\grbv{m}$ & keep       \\
+%     $\grbv{w}\grbmaskreplace{\grbv{m}}$          & compute for nodes selected by the values in $\grbv{m}$ & discard  \\
+%     $\grbv{w}\grbmask{\grbstr{\grbv{m}}}$        & compute for nodes selected by the pattern of $\grbv{m}$ & keep      \\
+%     $\grbv{w}\grbmaskreplace{\grbstr{\grbv{m}}}$ & compute for nodes selected by the pattern of $\grbv{m}$ & discard \\
 % \end{tabular}
 
 Initializing scalars, vectors, and matrices (GraphBLAS methods):
 
 \begin{itemize}
-    \item $\grbnewscalar{\grbss}{\grbfloat}{64}$
-    \item $\grbnewvector{\grbvw}{\grbfloat}{32}{n}$
-    \item $\grbnewmatrix{\grbmA}{\grbuint}{16}{m}{n}$
-    \item $\grbnewmatrix{\grbmA}{\grbint}{64}{k}{m}$
+    \item $\grbnewscalar{\grbs{s}}{\grbfloat}{64}$
+    \item $\grbnewvector{\grbv{w}}{\grbfloat}{32}{n}$
+    \item $\grbnewmatrix{\grbm{A}}{\grbuint}{16}{m}{n}$
+    \item $\grbnewmatrix{\grbm{A}}{\grbint}{64}{k}{m}$
 \end{itemize}
 
 \paragraph{Transposition}

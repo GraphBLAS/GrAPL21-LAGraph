@@ -15,7 +15,7 @@
 		\Comment{The $\grbm{Sigmas}$ matrices store frontier information for each level of the BFS phase.}
 		%\Comment{The memory for an entry in \grbm{Sigmas} is only allocated within the loop if needed.}
 		\Comment{BFS phase (forward sweep)}
-		\Do{$\grbnvals{\grbFrontier} > 0$}{
+		\Do{$\grbnvals{\grbm{Frontier}} > 0$}{
 			\Comment{$\grbm{Sigmas}[\grbs{d}](:, \grbs{s}) = \grbs{d}^{\textrm{th}}$ level frontier from source vertex $\grbs{s}$}
 			$\grbnewmatrix{\grbm{Sigmas}[\grbs{d}]}{\grbbool}{}{\grbs{n}}{\grbs{nsver}} $ \;
 			$\grbm{Sigmas}[\grbs{d}](:, :) = \grbm{Frontier} $ \Comment*{Convert matrix to Boolean} % the '(:, :)' is there to express 'assign' instead of 'dup'
