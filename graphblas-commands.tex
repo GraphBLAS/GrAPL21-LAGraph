@@ -16,57 +16,57 @@
 % by the lack of protection (\protect). Anyways, the workaround is actually cleaner.
 
 %\newcommand{\grbreduce}[2]{\left[{#1}_j \, {#2}(:, j) \right]}
-\ifbool{ascii}{ % ASCII mode ======================================================================
-    \newcommand{\grbm}[1]{{\ifbool{colored}{\color{brown}}{}{\mathtt{#1}}}}% matrix
-    \newcommand{\grbv}[1]{{\ifbool{colored}{\color{lilac}}{}{\mathtt{#1}}}}% vector
-    \newcommand{\grba}[1]{{\ifbool{colored}{\color{gray}}{}{\mathtt{#1}}}}% array
-    \newcommand{\grbs}[1]{{\ifbool{colored}{\color{blue}}{}{\mathtt{#1}}}}% scalar
+% \ifbool{ascii}{ % ASCII mode ======================================================================
+%     \newcommand{\grbm}[1]{{\ifbool{colored}{\color{brown}}{}{\mathtt{#1}}}}% matrix
+%     \newcommand{\grbv}[1]{{\ifbool{colored}{\color{lilac}}{}{\mathtt{#1}}}}% vector
+%     \newcommand{\grba}[1]{{\ifbool{colored}{\color{gray}}{}{\mathtt{#1}}}}% array
+%     \newcommand{\grbs}[1]{{\ifbool{colored}{\color{blue}}{}{\mathtt{#1}}}}% scalar
 
-    \newcommand{\grbstr}[1]{{\{#1\}}}
-    \newcommand{\grbmask}[1]{<\! #1 \!>}
-    \newcommand{\grbmaskreplace}[1]{<\!<\! #1 \!>\!>}
-    \newcommand{\grbneg}{\texttt{!}}
-    \newcommand{\grbassign}{\mathrel{\texttt{<-}}}
-    \newcommand{\grbf}[2]{\grboperation{#1}(#2)}
-    \newcommand{\grbreduce}[4]{[ {#1 #3} ]} % omit the indices
-    \newcommand{\grbt}{\texttt{'}} % transpose
-    \newcommand{\grbdiv}{\grbbinaryop{DIV}}
-    \newcommand{\grbminus}{\grbbinaryop{MINUS}}
-    \newcommand{\grbaccum}{\texttt{\ensuremath{+}}}
-    \newcommand{\grbaccumeq}[1]{\mathbin{\texttt{\ensuremath{\ifstrempty{#1}{\grbaccum}{#1}=}}}}
+%     \newcommand{\grbstr}[1]{{\{#1\}}}
+%     \newcommand{\grbmask}[1]{<\! #1 \!>}
+%     \newcommand{\grbmaskreplace}[1]{<\!<\! #1 \!>\!>}
+%     \newcommand{\grbneg}{\texttt{!}}
+%     \newcommand{\grbassign}{\mathrel{\texttt{<-}}}
+%     \newcommand{\grbf}[2]{\grboperation{#1}(#2)}
+%     \newcommand{\grbreduce}[4]{[ {#1 #3} ]} % omit the indices
+%     \newcommand{\grbt}{\texttt{'}} % transpose
+%     \newcommand{\grbdiv}{\grbbinaryop{DIV}}
+%     \newcommand{\grbminus}{\grbbinaryop{MINUS}}
+%     \newcommand{\grbaccum}{\texttt{\ensuremath{+}}}
+%     \newcommand{\grbaccumeq}[1]{\mathbin{\texttt{\ensuremath{\ifstrempty{#1}{\grbaccum}{#1}=}}}}
 
-    \newcommand{\grbplus}{\grbbinaryop{+}}
-    \newcommand{\grbtimes}{\grbbinaryop{\times}}
-    \newcommand{\grbapply}{\grbbinaryop{\odot}}
+%     \newcommand{\grbplus}{\grbbinaryop{+}}
+%     \newcommand{\grbtimes}{\grbbinaryop{\times}}
+%     \newcommand{\grbapply}{\grbbinaryop{\odot}}
 
-    \newcommand{\grbfrac}[2]{(#1)/(#2)}
+%     \newcommand{\grbfrac}[2]{(#1)/(#2)}
 
-    \newcommand{\grbbool}{\mathtt{bool}} % booleans
-    \newcommand{\grbuint}{\mathtt{uint}} % unsigned integers
-    \newcommand{\grbint}{\mathtt{int}}   % integers
-    \newcommand{\grbfloat}{\mathtt{fp}}  % floats (?)
+%     \newcommand{\grbbool}{\mathtt{bool}} % booleans
+%     \newcommand{\grbuint}{\mathtt{uint}} % unsigned integers
+%     \newcommand{\grbint}{\mathtt{int}}   % integers
+%     \newcommand{\grbfloat}{\mathtt{fp}}  % floats (?)
 
-    \newcommand{\grbplaceholder}[1]{\mathsf{#1}}
+%     \newcommand{\grbplaceholder}[1]{\mathsf{#1}}
 
-    \newcommand{\grbscalartype}[2]{\mathtt{#1#2()}}
-    \newcommand{\grbvectortype}[3]{\mathtt{#1#2(#3)}}
-    \newcommand{\grbmatrixtype}[4]{\mathtt{#1#2(#3, #4)}}
+%     \newcommand{\grbscalartype}[2]{\mathtt{#1#2()}}
+%     \newcommand{\grbvectortype}[3]{\mathtt{#1#2(#3)}}
+%     \newcommand{\grbmatrixtype}[4]{\mathtt{#1#2(#3, #4)}}
 
-    \newcommand{\grbnewscalar}[3]{\mathtt{#1 = \grbscalartype{#2}{#3}}}
-    \newcommand{\grbnewvector}[4]{\mathtt{#1 = \grbvectortype{#2}{#3}{#4}}}
-    \newcommand{\grbnewmatrix}[5]{\mathtt{#1 = \grbmatrixtype{#2}{#3}{#4}{#5}}}
+%     \newcommand{\grbnewscalar}[3]{\mathtt{#1 = \grbscalartype{#2}{#3}}}
+%     \newcommand{\grbnewvector}[4]{\mathtt{#1 = \grbvectortype{#2}{#3}{#4}}}
+%     \newcommand{\grbnewmatrix}[5]{\mathtt{#1 = \grbmatrixtype{#2}{#3}{#4}{#5}}}
 
-    \newcommand{\grbalpha}{\mathtt{alpha}}
-    \newcommand{\grboperator}[1]{\mathtt{#1}}
+%     \newcommand{\grbalpha}{\mathtt{alpha}}
+%     \newcommand{\grboperator}[1]{\mathtt{#1}}
 
-    \newcommand{\grbrange}[2]{#1:#2}
-    \newcommand{\grbdontcare}{\_}
+%     \newcommand{\grbrange}[2]{#1:#2}
+%     \newcommand{\grbdontcare}{\_}
 
-    \newcommand{\grboperationnoarg}[1]{\mathtt{#1}}
+%     \newcommand{\grboperationnoarg}[1]{\mathtt{#1}}
 
-    \newcommand{\grbewiseadd}[1]{\grbbinaryop{#1[intersection]}}
-    \newcommand{\grbewisemult}[1]{\grbbinaryop{#1[union]}}
-}{ % LaTeX mode ===================================================================================
+%     \newcommand{\grbewiseadd}[1]{\grbbinaryop{#1[intersection]}}
+%     \newcommand{\grbewisemult}[1]{\grbbinaryop{#1[union]}}
+% }{ % LaTeX mode ===================================================================================
     \newcommand{\grbm}[1]{{\ifbool{colored}{\color{brown}}{}{\mathbf{#1}}}}% matrix
     \newcommand{\grbv}[1]{{\ifbool{colored}{\color{lilac}}{}{\mathbf{#1}}}}% vector
     \newcommand{\grba}[1]{{\ifbool{colored}{\color{gray}}{}{\textbf{\textit{#1}}}}}% array
@@ -87,13 +87,13 @@
     \DeclareMathSymbol{\mapsfrom}{\mathrel}{arrows1}{"AB}
     \newcommand{\grbassign}{\mapsfrom}
 
-    \newcommand{\grbf}[2]{\grboperation{#1}{#2}}
+    \newcommand{\grbf}[2]{\mathit{#1}(#2)}
     \newcommand{\grbreduce}[4]{[ {#1}_{#2}\, #3(#4) ]}
     \newcommand{\grbt}{^\mathsf{T}} %^{\top}} % transpose
     \newcommand{\grbdiv}{\grbbinaryop{\oslash}}
     \newcommand{\grbminus}{\grbbinaryop{\ominus}}
-    \newcommand{\grbaccum}{\texttt{\ensuremath{\odot}}}
-    \newcommand{\grbaccumeq}[1]{\mathbin{\ensuremath{\ifstrempty{#1}{\grbaccum}{#1}\!\!=}}}
+    \newcommand{\grbaccum}{\ensuremath{\odot}}
+    \newcommand{\grbaccumeq}[1]{\mathbin{\ensuremath{\ifstrempty{#1}{\grbaccum}{#1}_\cup\!\!=}}}
 
     \newcommand{\grbplus}{\oplus}
     \newcommand{\grbtimes}{\otimes}
@@ -126,7 +126,7 @@
 
     \newcommand{\grbewiseadd}[1]{\grbbinaryop{#1_\cup}}
     \newcommand{\grbewisemult}[1]{\grbbinaryop{#1_\cap}}
-}
+% }
 
 % do not lange/rangle for tuples as it is already used for masks
 % do not use grbtuple for the time being
@@ -137,7 +137,8 @@
 %\newcommand{\grblorland}{\lor\!.\!\land}
 
 \newcommand{\grbsemiringops}[2]{\mathbin{\grboperator{#1.#2}}}
-\newcommand{\grbplustimes}{\grbsemiringops{\grbplus}{\grbtimes}}
+%\newcommand{\grbplustimes}{\grbsemiringops{\grbplus}{\grbtimes}}
+\newcommand{\grbplustimes}{\grbsemiringops{\grbplus_\cup}{\grbtimes_\cap}}
 
 \newcommand{\grbanypair}{\grbsemiringops{any}{pair}}
 \newcommand{\grbanyfirst}{\grbsemiringops{any}{first}}
@@ -159,7 +160,8 @@
 \newcommand{\grbmaxsecond}{\grbsemiringops{max}{second}}
 \newcommand{\grbsecondmin}{\grbsemiringops{second}{min}}
 \newcommand{\grbsecondmax}{\grbsemiringops{second}{max}}
-\newcommand{\grbarithmeticplustimes}{\grbsemiringops{plus}{times}} % not necessary because this is the default
+\newcommand{\grbarithmeticplustimes}{\grbsemiringops{+}{\times}}
+\newcommand{\grbarithmeticplustimestext}{\grbsemiringops{plus}{times}}
 
 \newcommand{\grbbinaryop}[1]{\mathbin{\grboperator{#1}}}
 \newcommand{\grbany}{\grbbinaryop{any}}
@@ -180,8 +182,10 @@
 \newcommand{\grbsecondj}{\grbbinaryop{secondj}}
 \newcommand{\grbfirstjone}{\grbbinaryop{firstj1}}
 \newcommand{\grbsecondjone}{\grbbinaryop{secondj1}}
-\newcommand{\grbarithmeticplus}{\grbbinaryop{plus}} % usually not necessary because this is the default addition
-\newcommand{\grbarithmetictimes}{\grbbinaryop{times}} % usually not necessary because this is the default multiplication
+\newcommand{\grbarithmeticplus}{\grbbinaryop{+}}
+\newcommand{\grbarithmetictimes}{\grbbinaryop{\times}}
+\newcommand{\grbarithmeticplustext}{\grbbinaryop{plus}}
+\newcommand{\grbarithmetictimestext}{\grbbinaryop{times}}
 \newcommand{\grbisne}{\grbbinaryop{isne}}
 \newcommand{\grbplustext}{\grbbinaryop{plus}}
 \newcommand{\grbtimestext}{\grbbinaryop{times}}
