@@ -16,3 +16,51 @@
 \todo{revise Scott, Tim D, and Tim M}
 
 \todo{consider adding semiring table}
+
+what do masks mean?
+
+the mask restricts the scope of the computation to the elements selected by the mask ($\grbm{m}$) or the complement of these elements ($\grbneg\grbm{m}$)
+
+there are variations based on
+(1)~how the elements are selected (based on the \emph{values} in the mask or the \emph{structure} of the mask)
+(2)~how the elements outside the selected ones are treated (they are \emph{replaced} with implicit zeros or they are kept intact and \emph{merged} with the results of the computation)
+
+by default, masks should use \emph{merge} semantics, i.e. the computation can only effect elements selected by the mask, elements outside the mask are unaffected
+$\grbvw\grbmask{\grbv{m}}$ and $\grbvw\grbmask{\grbneg \grbv{m}}$
+
+\emph{replace} semantics, i.e. they annihilate all elements outside the mask. this is denoted with
+$\grbvw\grbmaskreplace{\grbv{m}}$ and $\grbvw\grbmaskreplace{\grbneg \grbv{m}}$
+
+by default, element values in the mask are checked and elements with zero value are not used
+to avoid this, we use \emph{structural masks}
+$\grbvw\grbmask{\grbstr{\grbv{m}}}$ and $\grbvw\grbmask{\grbneg \grbstr{\grbv{m}}}$
+
+Combining \emph{replace semantics} and \emph{structural masks} is possible:
+$\grbvw\grbmaskreplace{\grbstr{\grbv{m}}}$
+$\grbvw\grbmaskreplace{\grbneg \grbstr{\grbv{m}}}$
+
+
+% \begin{tabular}{ll}
+%     $\grbvw\grbmask{\grbv{m}}$                 & compute for nodes selected by the values of $\grbv{m}$ & keep       \\
+%     $\grbvw\grbmaskreplace{\grbv{m}}$          & compute for nodes selected by the values in $\grbv{m}$ & discard  \\
+%     $\grbvw\grbmask{\grbstr{\grbv{m}}}$        & compute for nodes selected by the pattern of $\grbv{m}$ & keep      \\
+%     $\grbvw\grbmaskreplace{\grbstr{\grbv{m}}}$ & compute for nodes selected by the pattern of $\grbv{m}$ & discard \\
+% \end{tabular}
+
+Initializing scalars, vectors, and matrices (GraphBLAS methods):
+
+\begin{itemize}
+    \item $\grbnewscalar{\grbss}{\grbfloat}{64}$
+    \item $\grbnewvector{\grbvw}{\grbfloat}{32}{n}$
+    \item $\grbnewmatrix{\grbmA}{\grbuint}{16}{m}{n}$
+    \item $\grbnewmatrix{\grbmA}{\grbint}{64}{k}{m}$
+\end{itemize}
+
+\paragraph{Transposition}
+separate operator + descriptor ($\grbt$)
+
+vectors can be interpreted as row/column vectors, we do not transpose them manually
+
+extensions
+
+conversion table
