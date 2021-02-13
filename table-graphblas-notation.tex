@@ -44,8 +44,8 @@
                                                  & reduce vector to a scalar                                                                           & $\grbs{s} $                                        & $\grbaccumeq{} \grbreduce{\grbplus}{\grbs{i}}{\grbm{u}}{\grbs{i}}$                                                        \\
         \midrule
         \multirow{1}{*}{\tt transpose}           & transpose                                                                                           & $\grbm{C} \grbmask{\grbm{M}} $                     & $\grbaccumeq{} \grbm{A}\grbt$                                                                                             \\
-        % \midrule
-        % \tt kronecker                        & Kronecker multiplication                                                  & $\grbm{C} \grbmask{\grbm{M}}$                                                                          & $\grbaccumeq{} \grbkron{\grbm{A}, \grbm{B}}$                                        \\
+        \midrule
+        \tt kronecker                            & Kronecker multiplication                                                                            & $\grbm{C} \grbmask{\grbm{M}} $                     & $\grbaccumeq{} \grbkron{\grbm{A}, \grbgenericop, \grbm{B}}$                                                               \\
         \midrule\midrule
         % </operations>
         % <methods>
@@ -75,9 +75,13 @@
         Scalars including indices are lowercase italic ($\grbs{k}$, $\grbs{i}$, $\grbs{j}$) while arrays are lowercase bold italic ($\grba{x}$, $\grba{i}$, $\grba{j}$).
         $\grbplus$ and $\grbtimes$ are the addition and multiplication operators forming a semiring and default to conventional arithmetic $+$ and $\times$ operators.
         $\grbaccum$ is the accumulator operator.
-        \todo{do we need everything, e.g. subassign, Kronecker?}
-        \todo{matrices can be tranposed through descriptors, denoted with e.g. $\grbm{B}\grbt$}
-        \todo{masks}
+%       \todo{do we need everything, e.g. subassign, Kronecker? Tim's comment: if we have space, I suggest we add all operations.
+        Operations can be modified via a descriptor;
+        matrices can be transposed ($\grbm{B}\grbt$),
+        the mask can be complemented, and
+        the mask can be valued (shown above) or structural ($\grbm{C}\grbmask{\grbstr{M}}$).
+        A structural mask can also be complemented ($\grbm{C}\grbmask{\grbneg\grbstr{M}}$).
+        Not all methods are listed (creating new ops, monoids, and semirings, clearing a matrix/vector, etc.).
     }
     \label{tab:graphblas-notation}
 \end{table*}

@@ -1,11 +1,14 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
-\todo{Tim D}
+The performance of LAGraph can only be considered in context of an
+implementation of the underlying GraphBLAS library.  This is discussed in
+Section~\ref{sec:extensions}, followed by performance results of the new
+LAGraph API on the 6 algorithms in the GAP Benchmark
+\cite{DBLP:conf/sc/BeamerAP12}.
 
 \subsection{SuiteSparse Extensions}
 \label{sec:extensions}
-
 
 In a prior paper (\cite{DBLP:conf/iiswc/AzadABBCDDDDFGG20}), an early draft of
 SuiteSparse:GraphBLAS v4.0.0 (Aug 2020) was compared with the GAP benchmark
@@ -180,7 +183,9 @@ simple, elegant code, but it is also faster than the highly-tuned GAP benchmark
 method, \verb'bc.cc', for the three largest matrices (1.3x for Kron, 1.5x for
 Urand, and 1.2x for Twitter).
 
-% Feb7 update:  the sort is completely lazy.
+% Feb7 update:  the sort is completely lazy in BC.
+
+% Feb6 results: the sort partially lazy in BC.
 
 % For the Jan26 results:
 % We expect the BC in LAGraph+SS:GrB to become faster still in the next
@@ -200,8 +205,8 @@ With the addition of bitmap format (which makes push/pull optimization very
 simple to express, and very fast) and the $\grbanysecondi$ %ANY-SECONDI
 semiring, the BFS of a
 directed or undirected graph is easily expressed in GraphBLAS, and has a
-performance that is only about 2x slower than the GAP benchmark.  We expect
-the remaining 2x performance gap arises from two issues:
+performance that is only about 1.5x to 2x slower than the GAP benchmark.  We expect
+the remaining performance gap arises from two issues:
 
 \begin{enumerate}
 \item
