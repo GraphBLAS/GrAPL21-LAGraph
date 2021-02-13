@@ -9,7 +9,7 @@
         % <operations>
         \midrule
         \tt mxm                                  & matrix-matrix multiplication                                                                        & $\grbm{C} \grbmask{\grbm{M}}        $              & $\grbaccumeq{} \grbm{A} \grbplustimes \grbm{B}$                                                                           \\
-        \tt vxm                                  & vector-matrix multiplication                                                                        & $\grbv{\grbv{w}} \grbmask{\grbv{m}} $              & $\grbaccumeq{} \grbv{u} \grbplustimes \grbm{A}$                                                                           \\
+        \tt vxm                                  & vector-matrix multiplication                                                                        & $\grbv{w}\grbt \grbmask{\grbv{m}\grbt}   $         & $\grbaccumeq{} \grbv{u}\grbt \grbplustimes \grbm{A}$                                                                      \\
         \tt mxv                                  & matrix-vector multiplication                                                                        & $\grbv{w} \grbmask{\grbv{m}}        $              & $\grbaccumeq{} \grbm{A} \grbplustimes \grbv{u}$                                                                           \\
         \midrule
         \multirow{2}{*}{\tt eWiseAdd}            & element-wise addition using operator $\grbgenericop$                                                & $\grbm{C} \grbmask{\grbm{M}} $                     & $\grbaccumeq{} \grbm{A} \grbewiseadd{\grbgenericop} \grbm{B}$                                                             \\

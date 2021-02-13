@@ -1,22 +1,61 @@
 \section{Algorithms}
 \label{sec:algorithms}
 
-\subsection{BFS}
+%-------------------------------------------------------------------------------
+\subsection{Breadth-First Search (BFS)}
+%-------------------------------------------------------------------------------
 \label{sec:bfs}
 
-building on the observation that a vector-matrix multiplication $fA$ expresses the navigation from the nodes selected by vector $f$ in the graph represented by $A$
+The breadth-first search (BFS)
+builds on the observation that a vector-matrix multiplication $\grbv{f}\grbm{A}$ expresses
+the navigation from the nodes selected by vector $\grbv{f}$ in the graph represented
+by $\grbm{A}$.
 
-push/pull~\cite{DBLP:conf/icpp/YangBO18}
+A direction-optimizing push/pull BFS \cite{DBLP:conf/sc/BeamerAP12} is simple
+to express in GraphBLAS \cite{DBLP:conf/icpp/YangBO18}.  If $\grbm{A}$ is held by row,
+then $\grbm{fA}$ is a push step, while $\grbm{B}\grbt\grbv{f}$ is a pull step, where
+$\grbm{B}=\grbm{A}\grbt$ is the explicit transpose of $\grbm{A}$, also held by row.
+Other \grb libraries, \eg GraphBLAST, store both directions and perform
+direction-optimization automatically~\cite{DBLP:journals/corr/abs-1908-01407}.
 
-\footnote{Certain \grb libraries, \eg GraphBLAST, store both directions and perform direction-optimization automatically~\cite{DBLP:journals/corr/abs-1908-01407}}
+The GraphBLAS BFS relies on the $\grbanysecondi$ %ANY-SECONDI
+semiring to compute a single step,
+$\grbv{q} \grbmask{\grbneg \grbstr{\grbv{p}}} = \grbv{q}\grbt\grbm{A}$, where $\grbv{q}$ is the current frontier
+(using $\grbv{q}$ as short for queue),
+$\grbv{p}$ is the parent vector, and $\grbm{A}$ is the adjacency matrix.
+
+Consider a matrix multiply for conventional linear algebra, where the $\grbplus$ %PLUS
+monoid sums a set of $t$ entries to obtain a single scalar for computing
+$c_{ij} = \sum a_{ik} b_{kj}$ in the matrix multiply $\grbm{C} = \grbm{A}\grbm{B}$.  The $\grbany$ %ANY
+monoid performs the reduction of $t$ entries to a single number by merely selecting
+any one of the $t$ entries as the result $c_{ij}$.  The selection is done
+non-deterministically, allowing for a benign race condition.  In the BFS, this
+corresponds to selecting any valid parent of a newly discovered node.  Indeed,
+the creation of the $\grbany$ %ANY
+operator was inspired by Scott Beamer's \verb'bfs.cc'
+method in the GAP benchmark, which has the same benign race condition.  The $\grbany$ %ANY
+monoid translates the concept of this benign race condition to construct a
+valid BFS tree into a linear algebraic operation, suitable for implementation
+in GraphBLAS.
+
+The $\grbsecondi$ %SECONDI
+operator is the multiplicative operator in the $\grbanysecondi$ %ANY-SECONDI
+semiring, where the result of $a_{ik} b_{kj}$ is simply the index $k$ in the
+semiring for $\grbm{C} = \grbm{A}\grbm{B}$.  This gives the id of the parent node for a newly
+discovered node in the next frontier.  The $\grbany$ %ANY
+monoid then selects any valid
+parent $k$.
 
 \input{algorithms/bfs}
 
-\autoref{alg:bfs-parents} and \autoref{alg:bfs-parents-do}
+The push-only BFS is shown in
+\autoref{alg:bfs-parents}, while the push/pull BFS is \autoref{alg:bfs-parents-do}.
 
-$\grbanysecondi$
+% $\grbanysecondi$
 
+%-------------------------------------------------------------------------------
 \subsection{Betweenness Centrality}
+%-------------------------------------------------------------------------------
 \label{sec:bc}
 
 \input{algorithms/bc}

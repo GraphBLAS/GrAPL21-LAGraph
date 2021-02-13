@@ -68,33 +68,9 @@ been deleted from the matrix.  With the lazy sort, the sort is postponed until
 another algorithm requires sorted input matrices.  If the sort is lazy enough,
 it might never occur, which is the case for the LAGraph BFS and BC.
 
-Another useful addition to SS:GrB is the new positional binary operators.
-The BFS relies on the $\grbanysecondi$ %ANY-SECONDI
-semiring to compute a single step,
-$\grbv{q} \grbmask{\grbneg \grbstr{\grbv{\pi}}} = \grbv{q}\grbt\grbm{A}$, where $\grbv{q}$ is the current frontier
-$\grbv{\pi}$ is the parent vector, and $\grbm{A}$ is the adjacency matrix.
-
-Consider a matrix multiply for conventional linear algebra, where the $\grbplus$ %PLUS
-monoid sums a set of $t$ entries to obtain a single scalar for computing
-$c_{ij} = \sum a_{ik} b_{kj}$ in the matrix multiply $\grbm{C} = \grbm{A}\grbm{B}$.  The $\grbany$ %ANY
-monoid performs the reduction of $t$ entries to a single number by merely selecting
-any one of the $t$ entries as the result $c_{ij}$.  The selection is done
-non-deterministically, allowing for a benign race condition.  In the BFS, this
-corresponds to selecting any valid parent of a newly discovered node.  Indeed,
-the creation of the $\grbany$ %ANY
-operator was inspired by Scott Beamer's \verb'bfs.cc'
-method in the GAP benchmark, which has the same benign race condition.  The $\grbany$ %ANY
-monoid translates the concept of this benign race condition to construct a
-valid BFS tree into a linear algebraic operation, suitable for implementation
-in GraphBLAS.
-
-The $\grbsecondi$ %SECONDI
-operator is the multiplicative operator in the $\grbanysecondi$ %ANY-SECONDI
-semiring, where the result of $a_{ik} b_{kj}$ is simply the index $k$ in the
-semiring for $\grbm{C} = \grbm{A}\grbm{B}$.  This gives the id of the parent node for a newly
-discovered node in the next frontier.  The $\grbany$ %ANY
-monoid then selects any valid
-parent $k$.
+Another useful addition to SS:GrB is the new positional binary operators,
+such as the $\grbanysecondi$ %ANY-SECONDI
+used in the BFS.
 
 \subsection{Performance Results}
 
@@ -220,17 +196,17 @@ chosen with almost exactly 4 billion edges.  Graphs of current interest in
 large data science can easily exceeed $2^{32}$ nodes and edges \cite{9286235}.
 
 \item In GraphBLAS, the BFS must be expressed as two calls.  The first computes
-$\grbv{q} \grbmask{\grbneg \grbv{\pi}} = \grbv{q}\grbt \grbm{A}$, and the second updates the parent vector,
-$ \grbv{\pi} \grbmask{\grbstr{\grbv{q}}} = \grbv{q}$:
+$\grbv{q} \grbmask{\grbneg \grbv{p}} = \grbv{q}\grbt \grbm{A}$, and the second updates the parent vector,
+$\grbv{p} \grbmask{\grbstr{\grbv{q}}} = \grbv{q}$:
 
 {\footnotesize
 \begin{verbatim}
-  GrB_vxm (q, pi, NULL, semiring, q, A, GrB_DESC_RSC) ;
-  GrB_assign (pi, q, NULL, q, GrB_ALL, n, GrB_DESC_S) ; \end{verbatim}}
+  GrB_vxm (q, p, NULL, semiring, q, A, GrB_DESC_RSC) ;
+  GrB_assign (p, q, NULL, q, GrB_ALL, n, GrB_DESC_S) ; \end{verbatim}}
 
 In Scott Beamer's \verb'bfs.cc', these two steps are fused, and the
-matrix-vector multiplication can write its result directly into the vector
-\verb'pi'.  This could be implemented in a future GraphBLAS library, since the
+matrix-vector multiplication can write its result directly into the parent vector
+\verb'p'.  This could be implemented in a future GraphBLAS library, since the
 GraphBLAS API allows for a non-blocking mode where work is queued and done
 later, thus enabling a fusion of these two steps.  SS:GrB exploits the
 non-blocking mode (for its lazy sort, pending tuples, and zombies) but does not
