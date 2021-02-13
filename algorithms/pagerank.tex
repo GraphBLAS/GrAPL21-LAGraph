@@ -1,8 +1,11 @@
 \begin{algorithm}[htb]
-	\caption{PageRank.}
+	\caption{PageRank (as specified in the GAPBS).}
 	\label{alg:pagerank}
-	\KwData{$\grbm{A} \in \grbbool^{n \times n}$ $\grbs{\grbalpha}$ (damping factor), $\grbs{tol}$ (stopping tolerance), $\grbs{itermax}$ (maximum number of iterations)}
-	\KwResult{$\grbv{pagerank}$}
+    \KwData{$\grbm{A} \in \grbbool^{n \times n}$ \Comment*{adjacency matrix}}
+    \KwDataXX{$\grbs{damping}$ \Comment*{damping factor}}
+    \KwDataXX{$\grbs{tol}$ \Comment*{stopping tolerance}}
+    \KwDataXX{$\grbs{itermax}$\Comment*{maximum number of iterations}}
+	\KwResult{$\grbv{pagerank} \in \grbdouble^n$}
 	\Fn{PageRank}{
         % $\grbv{pr}(:) = 1 / n$ \;
         % $\grbv{outdegrees} = [\grbplus_{\grbs{j}} \grbm{A}(:, \grbs{j})] $ \;
@@ -20,22 +23,13 @@
         %     $\grbv{pr} = \grbv{pr} \grbplus \grbv{importance} $ \;
         % }
         $\grbs{teleport} = \frac{1 - \alpha}{n}$ \;
-        $\grbv{d_{out}} = \grbf{} $ \Comment{prescale with damping factor}
+        $\grbv{r} = \frac{1}{n}$ \;
+        $\grbv{d_{out}} = \grbreduce{+}{j}{\grbm{A}}{:, j} $ \;
+        $\grbv{d} = \grbv{d_{out}} \grbewisemult{\grbdiv} \grbs{damping}  $ \Comment{prescale with damping factor}
 
-        $\grbv{pr}(:) = 1 / n$ \;
-        $\grbv{outdegrees} = [\grbplus_{\grbs{j}} \grbm{A}(:, \grbs{j})] $ \;
+        %$\grbv{pr}(:) = 1 / n$ \;
         
-
         \For{$\grbs{k} = 1$ \KwTo $\grbs{numIterations}$}{
-            $\grbv{importance} = \grbv{pr} \grbdiv \grbv{outdegrees}$ \;
-            $\grbv{importance} = \grbf{times}{\grbv{importance}, \grbs{\grbalpha}} $ \Comment*{apply the $\grbf{times}{x, s} = x \cdot s$ operator}
-            $\grbv{importance} = \grbv{importance} \grbplustimes \grbm{A} $ \;
-
-            $\grbv{danglingVertexRanks} \grbmask{\grbneg{\grbv{outdegrees}}} = \grbv{pr}(:) $ \;
-            $\grbs{totalDanglingRank} = \grbfrac{\grbs{\grbalpha}}{\grbs{n}} \grbtimes \grbreduce{\grbplus}{\grbs{i}}{\grbv{danglingVertexRanks}}{\grbs{i}} $ \;
-
-            $\grbv{pr} = \grbfrac{1-\grbs{\grbalpha}}{\grbs{n}} \grbplus \grbs{totalDanglingRank} $ \;
-            $\grbv{pr} = \grbv{pr} \grbplus \grbv{importance} $ \;
         }
 	}
 \end{algorithm}

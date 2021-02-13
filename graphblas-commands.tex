@@ -90,8 +90,12 @@
     \newcommand{\grbf}[2]{\mathit{#1}(#2)}
     \newcommand{\grbreduce}[4]{[ {#1}_{#2}\, #3(#4) ]}
     \newcommand{\grbt}{^\mathsf{T}} %^{\top}} % transpose
-    \newcommand{\grbdiv}{\grbbinaryop{\oslash}}
-    \newcommand{\grbminus}{\grbbinaryop{\ominus}}
+    %\newcommand{\grbdiv}{\grbbinaryop{\oslash}}
+    %\newcommand{\grbminus}{\grbbinaryop{\ominus}}
+    
+    \newcommand{\grbdiv}{\grbbinaryop{div}}
+    \newcommand{\grbminus}{\grbbinaryop{minus}}
+    
     \newcommand{\grbaccum}{\ensuremath{\odot}}
     \newcommand{\grbaccumeq}[1]{\mathbin{\ensuremath{\ifstrempty{#1}{\grbaccum}{#1}\!\!=}}}
     %\newcommand{\grbaccumeq}[1]{\mathbin{\ensuremath{\ifstrempty{#1}{\grbaccum}{#1}_\cup\!\!=}}}
@@ -106,6 +110,7 @@
     \newcommand{\grbuint}{\mathbb{N}}  % unsigned integers
     \newcommand{\grbint}{\mathbb{Z}}   % integers
     \newcommand{\grbfloat}{\mathbb{Q}} % floats (?)
+    \newcommand{\grbdouble}{\mathtt{FP64}} % doubles
     
     \newcommand{\grbplaceholder}[1]{\mathsf{#1}}
 
@@ -117,7 +122,7 @@
     \newcommand{\grbnewvector}[4]{\text{let: } #1 \in \grbvectortype{#2}{#3}{#4}}
     \newcommand{\grbnewmatrix}[5]{\text{let: } #1 \in \grbmatrixtype{#2}{#3}{#4}{#5}}
 
-    \newcommand{\grbalpha}{\alpha}
+    %\newcommand{\grbalpha}{\alpha}
     \newcommand{\grboperator}[1]{\mathsf{#1}}
 
     \newcommand{\grbrange}[2]{#1 \! : \! #2}

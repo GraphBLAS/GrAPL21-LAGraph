@@ -3,7 +3,6 @@
 \SetKwProg{Fn}{Function}{}{end}
 \SetCommentSty{itshape}
 
-
 \SetKwComment{Comment}{\color{green!100}// }{}
 \renewcommand{\CommentSty}[1]{\tt \footnotesize \color{green!100}#1}
 
@@ -27,3 +26,12 @@
 \renewcommand{\sectionautorefname}{Sec.}
 \renewcommand{\subsectionautorefname}{Sec.}
 \renewcommand{\subsubsectionautorefname}{Sec.}
+
+\makeatletter
+\algocf@newcommand{KwDataXX}[1]{%
+  \sbox\algocf@inputbox{\hbox{\KwSty{Data}\algocf@typo: }}%
+  \ifthenelse{\boolean{algocf@inoutnumbered}}{\relax}{\everypar={\relax}}%
+  {\let\\\algocf@newinput\hspace{\wd\algocf@inputbox}\hangindent=\wd\algocf@inputbox\hangafter=\wd\algocf@inputbox#1\par}%
+  \algocf@linesnumbered% reset the numbering of the lines
+}
+\makeatother
