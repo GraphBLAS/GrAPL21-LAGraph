@@ -93,7 +93,8 @@
     \newcommand{\grbdiv}{\grbbinaryop{\oslash}}
     \newcommand{\grbminus}{\grbbinaryop{\ominus}}
     \newcommand{\grbaccum}{\ensuremath{\odot}}
-    \newcommand{\grbaccumeq}[1]{\mathbin{\ensuremath{\ifstrempty{#1}{\grbaccum}{#1}_\cup\!\!=}}}
+    \newcommand{\grbaccumeq}[1]{\mathbin{\ensuremath{\ifstrempty{#1}{\grbaccum}{#1}\!\!=}}}
+    %\newcommand{\grbaccumeq}[1]{\mathbin{\ensuremath{\ifstrempty{#1}{\grbaccum}{#1}_\cup\!\!=}}}
 
     \newcommand{\grbplus}{\oplus}
     \newcommand{\grbtimes}{\otimes}
@@ -137,8 +138,8 @@
 %\newcommand{\grblorland}{\lor\!.\!\land}
 
 \newcommand{\grbsemiringops}[2]{\mathbin{\grboperator{#1.#2}}}
-%\newcommand{\grbplustimes}{\grbsemiringops{\grbplus}{\grbtimes}}
-\newcommand{\grbplustimes}{\grbsemiringops{\grbplus_\cup}{\grbtimes_\cap}}
+\newcommand{\grbplustimes}{\grbsemiringops{\grbplus}{\grbtimes}}
+%\newcommand{\grbplustimes}{\grbsemiringops{\grbplus_\cup}{\grbtimes_\cap}}
 
 \newcommand{\grbanypair}{\grbsemiringops{any}{pair}}
 \newcommand{\grbanyfirst}{\grbsemiringops{any}{first}}
