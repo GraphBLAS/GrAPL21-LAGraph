@@ -33,8 +33,8 @@
             swap $\grbv{t}$ and $\grbv{r}$ \Comment{$\grbv{t}$ is now the prior rank}
             $\grbv{w} = \grbv{t} \grbewisemult{\grbdiv} \grbv{d}$ \;
             $\grbv{r}(0:n-1) = \grbs{teleport}$ \;
-            $\grbv{r} += \grbm{A}\grbt \grbplussecond \grbv{w}$ \;
-            $\grbv{t} -= \grbv{r}$ \;
+            $\grbv{r} \grbaccumeq{+} \grbm{A}\grbt \grbplussecond \grbv{w}$ \;
+            $\grbv{t} \grbaccumeq{-} \grbv{r}$ \;
             $\grbv{t} = abs(\grbv{t})$ \;
             \If{$\grbreduce{+}{j}{\grbv{t}}{:} < \grbs{tol}$}{return}
         }

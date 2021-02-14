@@ -143,7 +143,13 @@ particular algorithm.
 %-------------------------------------------------------------------------------
 \label{sec:connected-components}
 
-\todo{discuss CC}
-\autoref{alg:fastsv}
+The connected components algorithm in LAGraph (\autoref{alg:fastsv})
+is written by Zhang, Azad, and Bulu{\c{c}}
+\cite{ZHANG202014,DBLP:conf/ppsc/ZhangAH20}.  The method maintains a forest of
+trees represented by a parent vector, and interatively merges trees until no
+more merging is possible.  The method as shown in \autoref{alg:fastsv} is a
+simplified variant that it operates on the entire graph.  In the LAGraph
+version, a subgraph is constructed first, and the method finds the connected
+components of the subgraph, and then operates on the entire graph.
 \input{algorithms/fastsv}
 

@@ -204,7 +204,7 @@ intend to exploit this in the future.
 Note that for the Road graph,
 LAGraph+SS:GrB is quite slow for all but PageRank (PR).
 The primary reason for this is the high diameter of the Road graph
-(about 6000).  This requires 6000 iterations of GraphBLAS in the BFS, each with
+(about 6980).  This requires 6980 iterations of GraphBLAS in the BFS, each with
 a tiny amount of work.  Each call to GraphBLAS does several \verb'malloc' and
 \verb'free's, and in some cases the workspace must be initialized.  A future
 version of SS:GrB is planned that will eliminate this work entirely, by
