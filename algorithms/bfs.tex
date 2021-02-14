@@ -1,39 +1,35 @@
 \begin{algorithm}[htb]
-	\caption{Parents BFS.}
-	\label{alg:bfs-parents}
-	\DontPrintSemicolon
-	\KwIn{$\grbm{A}, \grbs{n}, \grbs{startVertex}$}
-	\Fn{ParentsBFS}{
-		$\grbv{p}(\grbs{startVertex}) = \grbs{startVertex}$ \;
-		$\grbv{q}(\grbs{startVertex}) = \grbs{startVertex}$ \;
-		\todo{use do-while loop with nvals > 0?}
-		\For{$\grbs{level} = 1$ \KwTo $\grbs{n}-1$}{
-			$\grbv{q} \grbmaskreplace{\grbneg \grbstr{\grbv{p}}} = \grbv{q} \grbanysecondi \grbm{A}$ \;
-			$\grbv{p} \grbmask{\grbstr{\grbv{q}}} = \grbv{q}$ \;
-			\todo{add break condition}
-		}
-
-		% \todo{sync notation with the one in the evaluation section}
-	}
+    \caption{Parents BFS.}
+    \label{alg:bfs-parents}
+    \DontPrintSemicolon
+    \KwIn{$\grbm{A}, \grbs{startVertex}$}
+    \Fn{ParentsBFS}{
+        $\grbv{p}(\grbs{startVertex}) = \grbs{startVertex}$ \;
+        $\grbv{q}(\grbs{startVertex}) = \grbs{startVertex}$ \;
+        \For{$\grbs{level} = 1$ \KwTo $\grbnrows{\grbm{A}}-1$}{
+            $\grbv{q}\grbt \grbmaskreplace{\grbneg \grbstr{\grbv{p}\grbt}} = \grbv{q}\grbt \grbanysecondi \grbm{A}$ \;
+            $\grbv{p} \grbmask{\grbstr{\grbv{q}}} = \grbv{q}$ \;
+            \If{$\grbnvals{\grbv{q}} = 0$}{return}
+        }
+    }
 \end{algorithm}
 
 \begin{algorithm}[htb]
-	\caption{Direction Optimizing Parent BFS.}
-	\label{alg:bfs-parents-do}
-	\DontPrintSemicolon
-	\KwIn{$\grbm{A}, \grbm{A}\grbt, \grbs{n}, \grbs{startVertex}$}
-	\Fn{DirectionOptimizingBFS}{
-		$\grbv{q}(\grbs{startVertex}) = 0$ \;
-		% \todo{sync notation with basic BFS}
-
-		\For{$\grbs{level} = 1$ \KwTo $\grbs{n}-1$}{
-			\If{$\mathit{Push}(\grbm{A}, \grbv{q})$}{ %\Comment{Decide to push/pull}
-				$\grbv{q} \grbmaskreplace{\grbneg \grbstr{\grbv{p}}} = \grbv{q} \grbanysecondi \grbm{A}$
-			}
-			\Else{
-				$\grbv{q} \grbmaskreplace{\grbneg \grbstr{\grbv{p}}} = \grbm{A}\grbt \grbanysecondi \grbv{q}$
-			}
-			$\grbv{p} \grbmask{\grbstr{\grbv{q}}} = \grbv{q}$ \;
-		}
-	}
+    \caption{Direction Optimizing Parent BFS.}
+    \label{alg:bfs-parents-do}
+    \DontPrintSemicolon
+    \KwIn{$\grbm{A}, \grbm{A}\grbt, \grbs{startVertex}$}
+    \Fn{DirectionOptimizingBFS}{
+        $\grbv{q}(\grbs{startVertex}) = 0$ \;
+        \For{$\grbs{level} = 1$ \KwTo $\grbnrows{\grbm{A}}-1$}{
+            \If{$\mathit{Push}(\grbm{A}, \grbv{q})$}{ %\Comment{Decide to push/pull}
+                $\grbv{q}\grbt \grbmaskreplace{\grbneg \grbstr{\grbv{p}\grbt}} = \grbv{q}\grbt \grbanysecondi \grbm{A}$
+            }
+            \Else{
+                $\grbv{q} \grbmaskreplace{\grbneg \grbstr{\grbv{p}}} = \grbm{A}\grbt \grbanysecondi \grbv{q}$
+            }
+            $\grbv{p} \grbmask{\grbstr{\grbv{q}}} = \grbv{q}$ \;
+            \If{$\grbnvals{\grbv{q}} = 0$}{return}
+        }
+    }
 \end{algorithm}

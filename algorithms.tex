@@ -7,22 +7,25 @@
 \label{sec:bfs}
 
 The breadth-first search (BFS)
-builds on the observation that a vector-matrix multiplication $\grbv{f}\grbm{A}$ expresses
+builds on the observation that a vector-matrix multiplication $\grbv{f}\grbt\grbm{A}$ expresses
 the navigation from the nodes selected by vector $\grbv{f}$ in the graph represented
 by $\grbm{A}$.
-
-A direction-optimizing push/pull BFS \cite{DBLP:conf/sc/BeamerAP12} is simple
+The direction-optimizing push/pull BFS \cite{DBLP:conf/sc/BeamerAP12} is simple
 to express in GraphBLAS \cite{DBLP:conf/icpp/YangBO18}.  If $\grbm{A}$ is held by row,
-then $\grbm{fA}$ is a push step, while $\grbm{B}\grbt\grbv{f}$ is a pull step, where
+then $\grbv{f}\grbt\grbm{A}$ is a push step, while $\grbm{B}\grbv{f}$ is a pull step, where
 $\grbm{B}=\grbm{A}\grbt$ is the explicit transpose of $\grbm{A}$, also held by row.
 Other \grb libraries, \eg GraphBLAST, store both directions and perform
 direction-optimization automatically~\cite{DBLP:journals/corr/abs-1908-01407}.
+The push-only BFS is shown in
+\autoref{alg:bfs-parents}, while the push/pull BFS is \autoref{alg:bfs-parents-do}.
 
 The GraphBLAS BFS relies on the $\grbanysecondi$ %ANY-SECONDI
 semiring to compute a single step,
 $\grbv{q} \grbmask{\grbneg \grbstr{\grbv{p}}} = \grbv{q}\grbt\grbm{A}$, where $\grbv{q}$ is the current frontier
 (using $\grbv{q}$ as short for queue),
 $\grbv{p}$ is the parent vector, and $\grbm{A}$ is the adjacency matrix.
+This step assigns the parents of newly nodes, which do not yet have a parent,
+using the complemented structural mask $\grbmask{\grbneg \grbstr{\grbv{p}}}$.
 
 Consider a matrix multiply for conventional linear algebra, where the $\grbplus$ %PLUS
 monoid sums a set of $t$ entries to obtain a single scalar for computing
@@ -48,9 +51,6 @@ parent $k$.
 
 \input{algorithms/bfs}
 
-The push-only BFS is shown in
-\autoref{alg:bfs-parents}, while the push/pull BFS is \autoref{alg:bfs-parents-do}.
-
 % $\grbanysecondi$
 
 %-------------------------------------------------------------------------------
@@ -58,39 +58,74 @@ The push-only BFS is shown in
 %-------------------------------------------------------------------------------
 \label{sec:bc}
 
+The vertex betweenness-centrality metric is a weighted measure of the number of
+shorted paths that go through any given node,
+\[ \sum_{s \ne i \ne t} \frac{\sigma (s, t|i)}{\sigma{s,t}}, \]
+where $\sigma(s,t)$ is the total number of shortest paths from node $s$ to $t$,
+and $\sigma(s,t|i)$ is the total number of shortest paths from node $s$ to $t$
+that pass through node $i$.  This is expensive to compute, so in practice,
+a subset of source nodes $s$ are chosen at random (a {\em batch}).
+
+Like the BFS, direction-optimization is incredibly simple to add to the LAGraph
+algorithm for batched betweenness-centrality (BC).
+It only requires a simple heuristic to determine which
+direction to use, followed by masked matrix-matrix multiplication with the
+matrix or its transpose: $\grbm{F} \grbmask{\grbneg \grbstr{\grbm{P}}} = \grbm{F}\grbm{B}\grbt$ (the pull) or $\grbm{F}
+\grbmask{\grbneg \grbstr{\grbm{P}}} = \grbm{F} \grbm{A}$ (the push), where $\grbm{A}$ is the adjacency matrix of
+the graph and $\grbm{B} = \grbm{A}\grbt$ is its explicit transpose, $\grbm{F}$ is the frontier, and the
+complemented structural mask $\grbneg \grbstr{\grbm{P}}$ is the set of unvisited nodes.  The multiplication
+$\grbm{F} \grbm{B}\grbt$ relies on the descriptor to represent the transpose of $\grbm{B}$, which is not
+explicitly transposed.  In the backward phase, the pull step is $\grbm{W} = \grbm{W} \grbm{A}\grbt$ while
+the push is $\grbm{W} = \grbm{W} \grbm{B}$, where $\grbm{W}$ is the 4-by-$n$ matrix in which centrality is
+accumulated.
+
+To simplify the presentation of the entire BC algorithm, \autoref{alg:bc} does
+not show the direction-optimization.  It is the same transformation as the pair
+of BFS algorithms, where the push-only step (line 5 of
+\autoref{alg:bfs-parents}), is expanded to a push/pull hueristic (lines 4-7 of
+\autoref{alg:bfs-parents-do}).
+
 \input{algorithms/bc}
 
-\autoref{alg:bc}
-
-also does push/pull as discussed in \autoref{sec:extensions}
-
+%-------------------------------------------------------------------------------
 \subsection{PageRank}
+%-------------------------------------------------------------------------------
 \label{sec:pagerank}
 
-% The PR in GAP does not work well if there are dangling vertices in the graph.
-% The Graphalytics benchmark has a PageRank variant which avoids this problem~\cite{DBLP:journals/corr/abs-2011-15028}.
+PageRank (PR) computes the importance of each node as a recursively-defined
+metric: a web page is important if important pages link to it.
+\autoref{alg:pagerank} shows the GraphBLAS implemenation of PR as specified in
+the GAP Benchmark.  The PR in GAP does not properly handle dangling vertices in
+the graph.  The Graphalytics benchmark has a PageRank variant which avoids this
+problem~\cite{DBLP:journals/corr/abs-2011-15028}.  We have included this
+version to compare its performance with the GAP benchmark algorithm
+\verb'pr.cc'.
 
 \input{algorithms/pagerank}
 
-\autoref{alg:pagerank}
-
+%-------------------------------------------------------------------------------
 \subsection{SSSP}
+%-------------------------------------------------------------------------------
 \label{sec:sssp}
-
-\input{algorithms/sssp-delta-stepping}
 
 \autoref{alg:sssp-delta-stepping}
 
-\subsection{Triangle Count}
-\label{sec:triangle-count}
+\input{algorithms/sssp-delta-stepping}
 
-\input{algorithms/triangle-count}
+%-------------------------------------------------------------------------------
+\subsection{Triangle Count}
+%-------------------------------------------------------------------------------
+\label{sec:triangle-count}
 
 \autoref{alg:triangle-count-sandiadot}
 
+\input{algorithms/triangle-count}
+
+%-------------------------------------------------------------------------------
 \subsection{Connected Components}
+%-------------------------------------------------------------------------------
 \label{sec:connected-components}
 
-\input{algorithms/fastsv}
-
 \autoref{alg:fastsv}
+
+\input{algorithms/fastsv}

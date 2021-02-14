@@ -38,19 +38,6 @@ LAGraph as an easy-to-read and easy-to-write code.  This enables non-experts to
 obtain a reasonably high level of performance with modest programming effort
 when writing their own graph algorithms.
 
-Direction-optimization is incredibly simple to add to an LAGraph algorithm.
-For example, a batched direction-optimizing betweenness-centrality (BC)
-algorithm in LAGraph only requires a simple heuristic to determine which
-direction to use, followed by masked matrix-matrix multiplication with the
-matrix or its transpose: $\grbm{F} \grbmask{\grbneg \grbstr{\grbm{P}}} = \grbm{F}\grbm{B}\grbt$ (the pull) or $\grbm{F}
-\grbmask{\grbneg \grbstr{\grbm{P}}} = \grbm{F} \grbm{A}$ (the push), where $A$ is the adjacency matrix of
-the graph and $\grbm{B} = \grbm{A}\grbt$ is its explicit transpose, $\grbm{F}$ is the frontier, and the
-complemented structural mask $\grbneg \grbstr{\grbm{P}}$ is the set of unvisited nodes.  The multiplication
-$\grbm{F} \grbm{B}\grbt$ relies on the descriptor to represent the transpose of $\grbm{B}$, which is not
-explicitly transposed.  In the backward phase, the pull step is $\grbm{W} = \grbm{W} \grbm{A}\grbt$ while
-the push is $\grbm{W} = \grbm{W} \grbm{B}$, where $\grbm{W}$ is the 4-by-$n$ matrix in which centrality is
-accumulated.
-
 Additional optimizations added to SS:GrB in the past year include a {\em lazy
 sort}.  Normally, SS:GrB keeps its vectors sorted (row vectors in a CSR matrix,
 or column vectors if the matrix is held by column), with entries sorted in
