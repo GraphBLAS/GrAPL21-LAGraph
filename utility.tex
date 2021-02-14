@@ -1,25 +1,107 @@
 \section{Utility Fuctions}
 \label{sec:utility}
 
-Here is a rough categorization of the utilities (not all included yet)
+LAGraph includes a set of utility functions that operate
+on a graph.  All function names are prefixed with \verb'LAGraph_'
+so we exclude that prefix in the names below, for brevity.
+
+% Here is a rough categorization of the utilities (not all included yet)
 \begin{itemize}
-\item {\bf Helpers:} TRY/CATCH, MIN/MAX, tic/toc, TypeName, KindName
-\item {\bf Memory management:} malloc, calloc, realloc, free stuff.  This might be covered in the design decisions section
-\item {\bf Threading:} Get/SetNumThreads. Shouldn’t this be part of init, or an LAGraph\_Context?  Should this also be discussed in design decisions.  GraphBLAS threading is one thing, but this seems to be LAGraph threading (outside of GraphBLAS calls).  I could see this as algorithm specific and not a general util.  The only way to leverage these inside algorithms is to either set a global property that all algorithms have access to, or creating a context that is passed to algorithms.
-\item {\bf Graph Properties:} If they operate on the LAGraph\_Graph cached properties consider a consistent naming scheme like LAGraph\_Property\_XXX
-\begin{itemize}
-  \item DeleteProperties (consider Property\_ClearAll), Property\_AT, Property\_AssymetricPattern, Property\_RowDegree, Property\_ColDegree
-  \item CheckGraph (consider Property\_Check)  check what?
-  \item SortByDegree, SampleDegree  (maybe belongs grouped here as it is computing properties, but maybe not cached
-\end{itemize}
-\item {\bf Graph I/O:} BinRead, MMRead (we are missing BinWrite, MMWrite), DisplayGraph (is this a pretty print of the matrix or all the properties, this should also take FILE*)
-\item {\bf Graph ops:} Pattern (MakePattern, GetPattern).  Not sure how to categorize these
-\item {\bf Graph query}: IsEqual, IsAll. Are these graph or matrix utils? IsAll is an ambiguous (maybe misleading) name because it seems to be a generic comparator (consider CompareGraphs).
-\item {\bf Consider for removal} Things that may be implementation detail and could be buried:
-\begin{itemize}
-  \item Sort1/2/3 - currently only Sort2 is used.  I don't see a strong need to include these as part of the public API at this time.
-  \item Random15/60 - I see Random64 being the most widely usable. These can easily be buried as well, and I would still suggest Random64 (Random60 seems too SuiteSparse:GraphBLAS specific.
-  \item Test\_ReadProblem (move to the TestArea)
-\end{itemize}
+
+\item {\bf Graph Properties:}
+    % If they operate on the LAGraph\_Graph cached properties consider a
+    % consistent naming scheme like LAGraph\_Property\_XXX
+    An \verb'LAGraph_Graph' includes cached properties which can be
+    assigned by Basic methods, or which are required by Advanced methods.
+
+    % \begin{itemize}
+      % \item
+      \verb'DeleteProperties' clear all properies,
+      % \item
+      \verb'Property_AT' computes the transpose of the adjacency matrix \verb'G->A',
+      % \item
+      \verb'Property_RowDegree' computes the row degrees of \verb'G->A',
+      % \item
+      \verb'Property_ColDegree' computes the column degrees of \verb'G->A',
+      % \item
+      and
+      \verb'Property_ASymmetricPattern' determines if the pattern of \verb'G->A' is symmetric or unsymmetric.
+       %   (consider Property\_ClearAll), Property\_AT, Property\_AssymetricPattern, Property\_RowDegree, Property\_ColDegree
+    % \end{itemize}
+
+\item {\bf Display and debug:}
+    \verb'CheckGraph' checks the validity of a graph.
+    Since the graph is not opaque, a user application is able to change a graph
+    arbitrarily and thus might make it an invalid object.
+    \verb'DisplayGraph' displays a graph and its properties.
+
+\item {\bf Memory management:}
+    Wrappers for \verb'malloc', \verb'calloc', \verb'realloc', and \verb'free',
+    allowing a user application to select the memory manager to be used.
+    These default to the ANSI C11 library functions.
+    % malloc, calloc, realloc, free stuff.  This might be covered in the design
+    % decisions section
+
+% \item {\bf Threading:}
+    % Get/SetNumThreads. Shouldn’t this be part of init, or an
+    % LAGraph\_Context?  Should this also be discussed in design decisions.
+    % GraphBLAS threading is one thing, but this seems to be LAGraph threading
+    % (outside of GraphBLAS calls).  I could see this as algorithm specific and
+    % not a general util.  The only way to leverage these inside algorithms is
+    % to either set a global property that all algorithms have access to, or
+    % creating a context that is passed to algorithms.
+
+\item {\bf Graph I/O:}
+    % \begin{itemize}
+    % \item
+    \verb'BinRead' and \verb'BinWrite' read/write a \verb'GrB_Matrix' in binary form.
+    % \item
+    \verb'MMRead' and \verb'MMWrite' read/write a \verb'GrB_Matrix' in Matrix Market form.
+    % , MMRead (we are missing BinWrite, MMWrite), DisplayGraph (is this a
+    % pretty print of the matrix or all the properties, this should also take
+    % FILE*)
+    % \end{itemize}
+
+\item {\bf Matrix operations:}
+    \verb'Pattern' returns a boolean matrix containing the pattern of a matrix.
+    % Pattern (MakePattern, GetPattern).  Not sure how to categorize these
+% \item {\bf Matrix comparison}:
+    \verb'IsEqual' determines if two matrices are equal.  It selects the appropriate
+    \verb'GrB_EQ_T' operator that matches the matrix type, and then calls \verb'IsAll'.
+    \verb'IsAll' compares two matrices and returns false if
+    the pattern of the two matrices differ.  It then uses a given comparator operator to
+    compare all pairs of entries, and returns true if all comparisons return true.
+    % IsEqual, IsAll. Are these graph or matrix utils? IsAll
+    % is an ambiguous (maybe misleading) name because it seems to be a generic
+    % comparator (consider CompareGraphs).
+
+\item {\bf Degree operations:}
+    % SortByDegree, SampleDegree  (maybe belongs grouped here as it is computing properties, but maybe not cached)
+    \verb'SortByDegree' returns a permutation that sorts a graph by its row/column degrees, and
+    \verb'SampleDegree' computes a quick estimate of the mean and median row/column degrees.
+
+\item {\bf Error handling:}
+    \verb'LAGraph_TRY' and \verb'GrB_TRY' are helper macros for a simple try/catch
+    mechanism.  They require the user application to define \verb'LAGraph_CATCH'
+    and \verb'GrB_CATCH'.
+    % TRY/CATCH, MIN/MAX, tic/toc, TypeName, KindName
+
+\item {\bf Other:}
+    \verb'TypeName' returns a string with the name of a \verb'GrB_Type'.
+    \verb'KindName' returns a string with of graph kind (directed or undirected).
+    \verb'Tic' and \verb'Toc' provide a portable timer.
+    \verb'Sort1', \verb'Sort2', and \verb'Sort3' sort 1, 2, or 3 integer arrays.
+
+% \item {\bf Consider for removal} Things that may be implementation detail and could be buried:
+
+% \begin{itemize}
+
+%  \item Sort1/2/3 - currently only Sort2 is used.  I don't see a strong need to include these as part of the public API at this time.
+
+%   \item Random15/60 - I see Random64 being the most widely usable. These can easily be buried as well, and I would still suggest Random64 (Random60 seems too SuiteSparse:GraphBLAS specific.
+
+%   \item Test\_ReadProblem (move to the TestArea)
+
+% \end{itemize}
 \end{itemize}
 
