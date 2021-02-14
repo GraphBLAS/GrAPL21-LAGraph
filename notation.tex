@@ -1,39 +1,63 @@
-\section{Notation}
+\section{GraphBLAS Theory and Notation}
 \label{sec:notation}
-
-GraphBLAS primer
-
-
 
 \input{table-graphblas-notation}
 
-In this section, we present a concise notation for the operations and methods defined in the \grb standard.
+In this section, we summarize the key concepts in \grb.
+Then, we present a concise notation for the operations and methods defined in the \grb standard.
 Additionally, we demonstrate how the operations can be interpreted as graph processing primitives if vectors encode nodes in the and the matrices are adjacency matrices. \todo{adjacency matrices can be rectangular}
 Note that the standard does not have such restrictions, hence, users of the API are free to define other kinds of vectors and matrices (such as incidence matrices) as well.
 
 %``guiding principles'': understandable (biggest probability of first guess to be correct), similar to existing notations~\cite{GraphBLASv13}
 %\todo{adjacency matrices should be square or generic rectangular matrices (representing bipartite graphs)...?}
 
+\subsection{Overview}
 
-\subsection{Data structures}
+Here, we give a brief overview of the theoretical aspects of the \grb. For more details, we refer the reader to tutorials~\cite{gabor_szarnyas_2020_4318870} and the specification documents~\cite{GraphBLASv13,GxBUserGuide}.
 
+\paragraph{Data structures}
+\grb builds on the duality between the graph and matrix data structures.
+Namely, a directed graph $G = (V, E)$ can be represented with an adjacency matrix $\grbm{A} \in \grbbool^{|V| \times |V|}$ where $\grbm{A}_{i,j} = \grbtrue$ iff $(v_i, v_j) \in E$.
+Induced subgraphs where source nodes are selected from $V_1$ and target nodes are selected from $V_2$ ($V_1, V_2 \subseteq V$) can be represented with $\grbm{A} \in \grbbool^{|V_1| \times |V_2|}$.
+Vectors are used to encode data for nodes, \eg $\grbv{u} \in \grbbool^{|V|}$ can be used to select a subset of nodes, while $\grbv{u} \in \grbbool^{|V|}$.
+Vectors and matrices can be defined over multiple types, \eg a nonnegative integer ($\grbuint$) matrix can encode the number of paths between two nodes, while a floating point ($\grbdouble$) matrix can encode edge weights.
+
+\paragraph{Semirings}
+\grb uses matrix operations %(\autoref{sec:operations})
+to express graph processing primitives, \eg a matrix-vector multiplication $\grbm{A} \grbplustimes \grbm{u}$ finds incoming neighbors of a given set of nodes.
+\grb allows users to use arbitrary semirings for multiplication operations.
+In general, the multiplication operator $\grbtimes$ is used to define how to combine the values of matching input elements, while the addition operator $\grbplus$ defines how the results should be summarized.
+For example, the $\grbminplus$ semiring uses $\grbplus$ as the multiplication operator to compute the path length and $\grbmin$ as the addition operator to determine the length of the shortest path.
+
+\paragraph{Masks and accumulators}
+All \grb operations whose output is a vector or a matrix, allow the use of masks to limit the scope of the computation. %? ~\cite{DBLP:conf/ipps/AzadBG15}
+This implies that the computation should be performed on a given set of nodes (for vector masks) or a given set of edges (for matrix masks).
+The accumulator operator $\grbaccum$ is a binary operator that determines how the result of an operation should be applied to its output.
+The interplay of masks and the accumulators is discussed in the specifications~\cite{GraphBLASv13,GxBUserGuide}.
+
+\paragraph{Notation}
+To present our algorithms, we use the notation shown in \autoref{tab:graphblas-notation}.
 Matrices and vectors are typeset in bold, starting with uppercase ($\grbm{A}$) and lowercase ($\grbv{u}$) letters, respectively.
 Scalars including indices are lowercase italic ($\grbs{k}$, $\grbs{i}$, $\grbs{j}$) while arrays are lowercase bold italic ($\grba{x}$, $\grba{i}$, $\grba{j}$).
-$\grbplus$ and $\grbtimes$ are the addition and multiplication operators forming a \grb semiring and default to conventional arithmetic $+$ and $\times$ operators.
-$\grbaccum$ is the accumulator operator that determines how (by default, no accumulator is specified).
 
 \subsection{Operations}
+\label{sec:operations}
 
 \paragraph{Matrix multiplication}
+\label{sec:mxm}
 
-\todo{navigate along neighbors}
+The \emph{matrix-matrix multiplication} operation $\grbm{C} \grbmask{\grbm{M}} \grbaccumeq{} \grbm{A} \grbplustimes \grbm{B}$ expresses navigation step starting from edges of $\grbm{A}$ and uses the edges of $\grbm{B}$.
+The result matrix $\grbm{C}$ contains paths with $\grbm{C}_{i,k}$ containing the summarized paths with start node $i$ in the graph of $\grbm{A}$ and end node $k$ in the graph of $\grbm{B}$.
+The \emph{vector-matrix multiplication} operation $\grbv{w}\grbt \grbmask{\grbv{m}\grbt} \grbaccumeq{} \grbv{u}\grbt \grbplustimes \grbm{A}$ performs navigation starting from the nodes selected in vector $\grbv{u}$ among the edges encoded in matrix $\grbm{A}$,
+while the \emph{matrix-vector multiplication} operation $\grbv{w} \grbmask{\grbv{m}} \grbaccumeq{} \grbm{A} \grbplustimes \grbv{u}$ performs navigation in the reverse direction of the edges encoded in $\grbm{A}$.
+The result vector $\grbm{w}$ contains the set of reached nodes with the values computed on the semiring (combining the initial node values with the outgoing edge values using $\grbtimes$ and summarizing the results in the same end node using $\grbplus$).
 
 \paragraph{Element-wise addition}
 
 The \emph{element-wise addition} operation applies the operator $\grbgenericop$ on the elements selected by the \emph{union of the structures of its inputs},
 \ie nodes/edges which are present in at least one of the inputs.
-For matrices, the operation is denoted with $\grbm{C} \grbmask{\grbm{M}} \grbaccumeq{} \grbm{A} \grbewiseadd{\grbgenericop} \grbm{B}$,
-for vectors, it is denoted with $\grbv{w} \grbmask{\grbv{m}} \grbaccumeq{} \grbv{u} \grbewiseadd{\grbgenericop} \grbv{v}$.
+%For matrices, the operation is denoted with $\grbm{C} \grbmask{\grbm{M}} \grbaccumeq{} \grbm{A} \grbewiseadd{\grbgenericop} \grbm{B}$,
+%for vectors, it is denoted with $\grbv{w} \grbmask{\grbv{m}} \grbaccumeq{} \grbv{u} \grbewiseadd{\grbgenericop} \grbv{v}$.
 
 \paragraph{Element-wise multiplication}
 
@@ -81,7 +105,7 @@ $$\grbm{C}^{[\grbtransposesymbol]} \grbmask{\grbm{M}} \grbaccumeq{} \grbm{A}^{[\
 % For symmetric matrices representing an undirected graph, $\grbm{A}\grbt = \grbm{A}$
 
 %\paragraph{Kronecker}
-%omitted
+%omitted to keep the paper concise
 
 \subsection{Masks}
 
@@ -140,9 +164,12 @@ vectors can be interpreted as row/column vectors, we do not transpose them manua
 
 extensions
 
-conversion table
 
 
 \subsection{Methods}
 
-they don't use masks
+% methods don't use masks
+
+
+
+\todo{conversion table?}
