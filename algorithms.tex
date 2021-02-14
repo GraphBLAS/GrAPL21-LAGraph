@@ -48,16 +48,16 @@ semiring for $\grbm{C} = \grbm{A}\grbm{B}$.  This gives the id of the parent nod
 discovered node in the next frontier.  The $\grbany$ %ANY
 monoid then selects any valid
 parent $k$.
-
+%
 \input{algorithms/bfs}
 
-% $\grbanysecondi$
-
 %-------------------------------------------------------------------------------
-\subsection{Betweenness Centrality}
+\subsection{Betweenness Centrality (BC)}
 %-------------------------------------------------------------------------------
 \label{sec:bc}
 
+\input{algorithms/bc}
+%
 The vertex betweenness-centrality metric is a weighted measure of the number of
 shorted paths that go through any given node,
 \[ \sum_{s \ne i \ne t} \frac{\sigma (s, t|i)}{\sigma{s,t}}, \]
@@ -85,47 +85,65 @@ of BFS algorithms, where the push-only step (line 5 of
 \autoref{alg:bfs-parents}), is expanded to a push/pull hueristic (lines 4-7 of
 \autoref{alg:bfs-parents-do}).
 
-\input{algorithms/bc}
-
 %-------------------------------------------------------------------------------
-\subsection{PageRank}
+\subsection{PageRank (PR)}
 %-------------------------------------------------------------------------------
 \label{sec:pagerank}
 
 PageRank (PR) computes the importance of each node as a recursively-defined
 metric: a web page is important if important pages link to it.
 \autoref{alg:pagerank} shows the GraphBLAS implemenation of PR as specified in
-the GAP Benchmark.  The PR in GAP does not properly handle dangling vertices in
-the graph.  The Graphalytics benchmark has a PageRank variant which avoids this
+the GAP Benchmark.  It uses the $\grbplussecond$ semiring, where
+$\grboperator{second}(x,y)=y$, so it can ignore any edge weights in the input
+matrix.  The PR in GAP does not properly handle dangling vertices in the graph.
+The Graphalytics benchmark has a PageRank variant which avoids this
 problem~\cite{DBLP:journals/corr/abs-2011-15028}.  We have included this
 version to compare its performance with the GAP benchmark algorithm
 \verb'pr.cc'.
-
+%
 \input{algorithms/pagerank}
 
 %-------------------------------------------------------------------------------
-\subsection{SSSP}
+\subsection{Single-Source Shortest-Paths (SSSP)}
 %-------------------------------------------------------------------------------
 \label{sec:sssp}
 
-\autoref{alg:sssp-delta-stepping}
-
+A Delta-Stepping Single-Source-Shortest-Path algorithm in GraphBLAS is shown in
+\autoref{alg:sssp-delta-stepping}.  It relies on the $\grbminplus$ semiring.
+Since it is a fairly complex algorithm, refer to
+\cite{DBLP:conf/ipps/SridharBMSLM19} for a description of the method.
+%
 \input{algorithms/sssp-delta-stepping}
 
 %-------------------------------------------------------------------------------
-\subsection{Triangle Count}
+\subsection{Triangle Counting (TC)}
 %-------------------------------------------------------------------------------
 \label{sec:triangle-count}
 
-\autoref{alg:triangle-count-sandiadot}
-
+The triangle counting (TC) problem is to compute the number of unique cliques
+of size 3 in a graph.  The TC algorithm is shown in
+\autoref{alg:triangle-count-sandiadot}, based on \cite{8091043}.
+%
 \input{algorithms/triangle-count}
+%
+It starts with a heuristic that decides when
+to sort the input graph by ascending degree.  Next, it constructs the lower and
+upper triangular part and computes a masked matrix multiply using the
+$\grbpluspair$ semiring.  Internally, a dot product method is used in SS:GrB,
+because $\grbm{U}$ is transposed via the descriptor.  The $\grboperator{pair}$
+is the simple function $\grboperator{pair}(x,y)=1$.  When used in a semiring,
+it acts like the $\grboperator{times}$ operator of the conventional semiring,
+except that it can ignore the values of its inputs and treat them both as 1.
+This semiring is useful for structural computations, such as triangle counting,
+when the edge weights of a graph may be present but should be ignored in a
+particular algorithm.
 
 %-------------------------------------------------------------------------------
 \subsection{Connected Components}
 %-------------------------------------------------------------------------------
 \label{sec:connected-components}
 
+\todo{discuss CC}
 \autoref{alg:fastsv}
-
 \input{algorithms/fastsv}
+

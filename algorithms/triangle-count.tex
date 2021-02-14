@@ -1,12 +1,17 @@
 \begin{algorithm}[htb]
-	\caption{Triangle count (``SandiaDot'' variant).}
+	\caption{Triangle counting} %  (``SandiaDot'' variant).}
 	\label{alg:triangle-count-sandiadot}
 	\KwData{$\grbm{A} \in \grbbool^{n \times n}$}
 	\KwResult{$t \in \grbuint$}
 	\Fn{TriangleCount}{
+                sample the $\grbs{mean}$ and $\grbs{median}$ degree of $\grbm{A}$ \;
+                \If{$\grbs{mean} > 4 \times \grbs{median}$}{
+                    $\grbv{p}$ = permutation to sort degree, ascending order \;
+                    $\grbm{A} = \grbm{A}(\grbv{p},\grbv{p})$ \;
+                }
 		$\grbm{L} = \grbtril{\grbm{A}}$ \;
 		$\grbm{U} = \grbtriu{\grbm{A}}$ \;
-		$\grbm{C}\grbmask{\grbstr{\grbm{L}}} = \grbm{L} \grbarithmeticplustimes \grbm{U}\grbt$ \;
+		$\grbm{C}\grbmask{\grbstr{\grbm{L}}} = \grbm{L} \grbpluspair \grbm{U}\grbt$ \;
 		$\grbs{t} = \grbreduce{\grbarithmeticplus}{\grbs{i}\grbs{j}}{\grbm{C}}{\grbs{i}, \grbs{j}}$ \;
 	}
 \end{algorithm}
