@@ -1971,3 +1971,21 @@ keywords = {Connected Component, Distributed memory, GraphBLAS},
 abstract = {Finding connected components is one of the most widely used operations on a graph. Optimal serial algorithms for the problem have been known for half a century, and many competing parallel algorithms have been proposed over the last several decades under various different models of parallel computation. This paper presents a class of parallel connected-component algorithms designed using linear-algebraic primitives. These algorithms are based on a PRAM algorithm by Shiloach and Vishkin and can be designed using standard GraphBLAS operations. We demonstrate two algorithms of this class, one named LACC for Linear Algebraic Connected Components, and the other named FastSV which can be regarded as LACC’s simplification. With the support of the highly-scalable Combinatorial BLAS library, LACC and FastSV outperform the previous state-of-the-art algorithm by a factor of up to 12x for small to medium scale graphs. For large graphs with more than 50B edges, LACC and FastSV scale to 4K nodes (262K cores) of a Cray XC40 supercomputer and outperform previous algorithms by a significant margin. This remarkable performance is accomplished by (1) exploiting sparsity that was not present in the original PRAM algorithm formulation, (2) using high-performance primitives of Combinatorial BLAS, and (3) identifying hot spots and optimizing them away by exploiting algorithmic insights.}
 }
 
+@misc{SuiteSparseGraphBLAS,
+  title={{SuiteSparse GraphBLAS repository}},
+  author={Davis, Timothy A},
+  howpublished={https://github.com/DrTimothyAldenDavis/GraphBLAS}
+  }
+
+@misc{GraphBLASforum,
+  title={{GraphBLAS} forum},
+  howpublished={https://graphblas.github.io}
+  }
+  
+@misc{LAGraphRepo,
+  title={{LAGraph} github repository},
+  howpublished={  https://github.com/GraphBLAS/LAGraph}
+  }  
+
+  
+  
