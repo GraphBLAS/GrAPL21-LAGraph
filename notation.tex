@@ -1,11 +1,89 @@
 \section{Notation}
 \label{sec:notation}
 
+GraphBLAS primer
+
+
+
 \input{table-graphblas-notation}
 
-``guiding principles'': understandable (biggest probability of first guess to be correct), similar to existing notations~\cite{GraphBLASv13}
+In this section, we present a concise notation for the operations and methods defined in the \grb standard.
+Additionally, we demonstrate how the operations can be interpreted as graph processing primitives if vectors encode nodes in the and the matrices are adjacency matrices. \todo{adjacency matrices can be rectangular}
+Note that the standard does not have such restrictions, hence, users of the API are free to define other kinds of vectors and matrices (such as incidence matrices) as well.
 
-\todo{initial draft by Gabor}
+%``guiding principles'': understandable (biggest probability of first guess to be correct), similar to existing notations~\cite{GraphBLASv13}
+%\todo{adjacency matrices should be square or generic rectangular matrices (representing bipartite graphs)...?}
+
+
+\subsection{Data structures}
+
+Matrices and vectors are typeset in bold, starting with uppercase ($\grbm{A}$) and lowercase ($\grbv{u}$) letters, respectively.
+Scalars including indices are lowercase italic ($\grbs{k}$, $\grbs{i}$, $\grbs{j}$) while arrays are lowercase bold italic ($\grba{x}$, $\grba{i}$, $\grba{j}$).
+$\grbplus$ and $\grbtimes$ are the addition and multiplication operators forming a \grb semiring and default to conventional arithmetic $+$ and $\times$ operators.
+$\grbaccum$ is the accumulator operator that determines how (by default, no accumulator is specified).
+
+\subsection{Operations}
+
+\paragraph{Matrix multiplication}
+
+\todo{navigate along neighbors}
+
+\paragraph{Element-wise addition}
+
+The \emph{element-wise addition} operation applies the operator $\grbgenericop$ on the elements selected by the \emph{union of the structures of its inputs},
+\ie nodes/edges which are present in at least one of the inputs.
+For matrices, the operation is denoted with $\grbm{C} \grbmask{\grbm{M}} \grbaccumeq{} \grbm{A} \grbewiseadd{\grbgenericop} \grbm{B}$,
+for vectors, it is denoted with $\grbv{w} \grbmask{\grbv{m}} \grbaccumeq{} \grbv{u} \grbewiseadd{\grbgenericop} \grbv{v}$.
+
+\paragraph{Element-wise multiplication}
+
+The \emph{element-wise multiplication} operation applies the operator $\grbgenericop$ on the elements selected by the \emph{intersection of the structures of its inputs},
+\ie nodes/edges which are present in both inputs.
+The notation is the same as that of the element-wise addition operation except using $\grbewisemult{\grbgenericop}$.
+
+\paragraph{Extract}
+For adjacency matrix $\grbm{A}$,
+the \emph{extract submatrix} operation $\grbm{C} \grbmask{\grbm{M}} \grbaccumeq{} \grbm{A}(\grba{i}, \grba{j})$ selects the induced subgraph where
+the source nodes of the edges are in array $\grba{i}$ and
+the target nodes of the edges are in array $\grba{j}$.
+The \emph{extract vector} operation $\grbv{w} \grbmask{\grbv{m}} \grbaccumeq{} \grbv{A}(\grbs{i}, :)$ selects a column vector containing node $\grbs{i}$'s neighbors along incoming edges.
+Finally, the \emph{extract subvector} operation $\grbv{w} \grbmask{\grbv{m}} \grbaccumeq{} \grbv{u}(\grba{i})$ selects the nodes with indices in array $\grba{i}$.
+
+%with an optional mask $\grbmask{\grbm{M}}$ to limit the computation to certain edges.
+
+\paragraph{Assign}
+
+\todo{edge values, vertex values, constant value}
+
+%\paragraph{Subassign} ?
+
+\paragraph{Apply}
+
+\todo{apply}
+
+
+\paragraph{Select}
+
+\todo{selectively keep edges/nodes based on condition, including the indices of ops}
+
+\paragraph{Reduce}
+For adjacency matrix $\grbm{A}$, 
+the \emph{row-wise reduction} $\grbv{w} \grbmask{\grbv{m}} \grbaccumeq{} \grbreduce{\grbplus}{\grbs{j}}{\grbm{A}}{:,\grbs{j}}$ represents a summarization of the values on outgoing edges for each node (represented by row vector $\grbm{A}(:, \grbs{j})$) to vector $\grbv{w}$ with an optional mask $\grbmask{\grbv{m}}$ to limit the computation to certain nodes.
+For matrix $\grbm{A}$, the \emph{reduction to scalar} $\grbs{s} \grbaccumeq{} \grbreduce{\grbplus}{\grbs{i}, \grbs{j}}{\grbm{A}}{\grbs{i},\grbs{j}}$ represents a summarization of all edge values.
+For vector $\grbv{u}$, the \emph{reduction to scalar} $\grbs{s} \grbaccumeq{} \grbreduce{\grbplus}{\grbs{i}}{\grbm{u}}{\grbs{i}}$ represents a summarization of all node values.
+
+\paragraph{Transposition}
+The transposed variant of matrix $\grbm{A}$ is denoted with $\grbm{A}\grbt$ where $\grbm{A}\grbt(i, j) = \grbm{A}(j, i)$.
+For adjacency matrix $\grbm{A}$, matrix $\grbm{A}\grbt$ contains the edges in the reverse direction.
+Transposition can be applied as a standalone \grb operation $\grbm{C} \grbmask{\grbm{M}} \grbaccumeq{} \grbm{A}\grbt$ with an optional mask $\grbmask{\grbm{M}}$ and also to the input/output matrices of operations, for example:
+$$\grbm{C}^{[\grbtransposesymbol]} \grbmask{\grbm{M}} \grbaccumeq{} \grbm{A}^{[\grbtransposesymbol]} \grbplustimes \grbm{B}^{[\grbtransposesymbol]}$$
+
+% For symmetric matrices representing an undirected graph, $\grbm{A}\grbt = \grbm{A}$
+
+%\paragraph{Kronecker}
+%omitted
+
+\subsection{Masks}
 
 \todo{explain masks}
 
@@ -22,7 +100,7 @@ what do masks mean?
 the mask restricts the scope of the computation to the elements selected by the mask ($\grbm{m}$) or the complement of these elements ($\grbneg\grbm{m}$)
 
 there are variations based on
-(1)~how the elements are selected (based on the \emph{values} in the mask or the \emph{structure} of the mask)
+(1)~how the elements are selected (\emph{valued} masks take the element values into consideration, while \emph{structural} masks only use the structure (pattern) of the mask
 (2)~how the elements outside the selected ones are treated (they are \emph{replaced} with implicit zeros or they are kept intact and \emph{merged} with the results of the computation)
 
 by default, masks should use \emph{merge} semantics, i.e. the computation can only effect elements selected by the mask, elements outside the mask are unaffected
@@ -56,7 +134,6 @@ Initializing scalars, vectors, and matrices (GraphBLAS methods):
     \item $\grbnewmatrix{\grbm{A}}{\grbint}{64}{k}{m}$
 \end{itemize}
 
-\paragraph{Transposition}
 separate operator + descriptor ($\grbt$)
 
 vectors can be interpreted as row/column vectors, we do not transpose them manually
@@ -64,3 +141,8 @@ vectors can be interpreted as row/column vectors, we do not transpose them manua
 extensions
 
 conversion table
+
+
+\subsection{Methods}
+
+they don't use masks
