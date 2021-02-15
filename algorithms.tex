@@ -64,7 +64,7 @@ shorted paths that go through any given node,
 where $\sigma(s,t)$ is the total number of shortest paths from node $s$ to $t$,
 and $\sigma(s,t|i)$ is the total number of shortest paths from node $s$ to $t$
 that pass through node $i$.  This is expensive to compute, so in practice,
-a subset of source nodes $s$ are chosen at random (a {\em batch}).
+a subset of source nodes are chosen at random (a {\em batch}), of size $ns$.
 
 Like the BFS, direction-optimization is incredibly simple to add to the LAGraph
 algorithm for batched betweenness-centrality (BC).
@@ -76,8 +76,8 @@ the graph and $\grbm{B} = \grbm{A}\grbt$ is its explicit transpose, $\grbm{F}$ i
 complemented structural mask $\grbneg \grbstr{\grbm{P}}$ is the set of unvisited nodes.  The multiplication
 $\grbm{F} \grbm{B}\grbt$ relies on the descriptor to represent the transpose of $\grbm{B}$, which is not
 explicitly transposed.  In the backward phase, the pull step is $\grbm{W} = \grbm{W} \grbm{A}\grbt$ while
-the push is $\grbm{W} = \grbm{W} \grbm{B}$, where $\grbm{W}$ is the 4-by-$n$ matrix in which centrality is
-accumulated.
+the push is $\grbm{W} = \grbm{W} \grbm{B}$, where $\grbm{W}$ is the $ns$-by-$n$ matrix in which centrality is
+accumulated (where $ns=4$ is a typical batch size).
 
 To simplify the presentation of the entire BC algorithm, \autoref{alg:bc} does
 not show the direction-optimization.  It is the same transformation as the pair
