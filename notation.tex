@@ -136,31 +136,29 @@ $$\grbm{C}^{[\grbtransposesymbol]} \grbmask{\grbm{M}} \grbaccumeq{} \grbm{A}^{[\
 % \todo{revise Scott, Tim D, and Tim M}
 
 Masks are used by all \grb operations to limit the scope of the computation \wrt the output of the operation.
-Namely, the mask prescribe that the computation only needs to be performed on the elements selected by the mask ($\grbm{m}$) or the complement of these elements ($\grbneg\grbm{m}$).
+Therefore, for operations resulting in a vector, the mask is based on a vector~$\grbm{m}$ and for those resulting in a matrix, it is based on a matrix~$\grbm{M}$.
+Here, we only discuss matrix masks and the definitions can trivially adopted to vectors.
 
-There are variations based on
-(1)~how the elements are selected (\emph{valued} masks take the element values into consideration, while \emph{structural} masks only use the structure (pattern) of the mask
-(2)~how the elements outside the selected ones are treated (they are \emph{replaced} with implicit zeros or they are kept intact and \emph{merged} with the results of the computation).
+Masks can vary based multiple aspects:
+\begin{itemize}
+    \item
+        Does the computation need to be performed on the elements selected by the mask ($\grbmask{\grbm{M}}$) or the complement of these elements ($\grbmask{\grbneg\grbm{M}}$)?
+    \item
+        How are existing elements of the output matrix that fall outside the selected ones treated?
+        By default, masks use \emph{merge} semantics, \ie the computation can only effect elements selected by the mask, elements outside the mask are unaffected.
+        If \emph{replace} semantics is set, masks annihilate all elements outside the mask. This is denoted with $\grbmaskreplace{\grbm{M}}$.
+    \item
+        How the elements are selected?
+        By default, masks are \emph{valued}, \ie values in the mask are checked and elements with zero values are not used considered to be part of the mask.
+        To only consider the pattern of the mask, \emph{structural masks} should be used, denoted with $\grbmask{\grbstr{\grbm{M}}}$.
+\end{itemize}
 
-By default, masks use \emph{merge} semantics, \ie the computation can only effect elements selected by the mask, elements outside the mask are unaffected
-$\grbv{w}\grbmask{\grbv{m}}$.
-%$\grbv{w}\grbmask{\grbneg \grbv{m}}$
-
-If \emph{replace} semantics is actived, masks annihilate all elements outside the mask. This is denoted with
-$\grbv{w}\grbmaskreplace{\grbv{m}}$.
-%$\grbv{w}\grbmaskreplace{\grbneg \grbv{m}}$
-
-By default, masks are \emph{valued}, \ie values in the mask are checked and elements with zero values are not used considered to be part of the mask.
-To only consider the pattern of the mask, \emph{structural masks}: $\grbv{w}\grbmask{\grbstr{\grbv{m}}}$
-%$\grbv{w}\grbmask{\grbneg \grbstr{\grbv{m}}}$
-
-Combining \emph{replace semantics} and \emph{structural masks} is possible and is denoted as $\grbv{w}\grbmaskreplace{\grbstr{\grbv{m}}}$
-%$\grbv{w}\grbmaskreplace{\grbneg \grbstr{\grbv{m}}}$
-
-
-
+Combining \emph{replace semantics} and \emph{structural masks} is possible and is denoted with
+$\grbmaskreplace{\grbstr{\grbm{M}}}$
 
 \subsection{Methods}
+
+
 
 % methods don't use masks
 
@@ -174,8 +172,8 @@ Combining \emph{replace semantics} and \emph{structural masks} is possible and i
 % \end{itemize}
 
 % \begin{tabular}{ll}
-%     $\grbv{w}\grbmask{\grbv{m}}$                 & compute for nodes selected by the values of $\grbv{m}$ & keep       \\
-%     $\grbv{w}\grbmaskreplace{\grbv{m}}$          & compute for nodes selected by the values in $\grbv{m}$ & discard  \\
-%     $\grbv{w}\grbmask{\grbstr{\grbv{m}}}$        & compute for nodes selected by the pattern of $\grbv{m}$ & keep      \\
-%     $\grbv{w}\grbmaskreplace{\grbstr{\grbv{m}}}$ & compute for nodes selected by the pattern of $\grbv{m}$ & discard \\
+%     $\grbm{C}\grbmask{\grbm{M}}$                 & compute for nodes selected by the values of $\grbm{M}$ & keep       \\
+%     $\grbm{C}\grbmaskreplace{\grbm{M}}$          & compute for nodes selected by the values in $\grbm{M}$ & discard  \\
+%     $\grbm{C}\grbmask{\grbstr{\grbm{M}}}$        & compute for nodes selected by the pattern of $\grbm{M}$ & keep      \\
+%     $\grbm{C}\grbmaskreplace{\grbstr{\grbm{M}}}$ & compute for nodes selected by the pattern of $\grbm{M}$ & discard \\
 % \end{tabular}
