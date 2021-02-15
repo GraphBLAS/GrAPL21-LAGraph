@@ -34,10 +34,11 @@
             $\grbv{w} = \grbv{t} \grbewisemult{\grbdiv} \grbv{d}$ \;
             $\grbv{r}(0:n-1) = \grbs{teleport}$ \;
             $\grbv{r} \grbaccumeq{+} \grbm{A}\grbt \grbplussecond \grbv{w}$ \;
-            \Comment{terminate if 1-norm of change is small}
             $\grbv{t} \grbaccumeq{-} \grbv{r}$ \;
             $\grbv{t} = abs(\grbv{t})$ \;
-            \If{$\grbreduce{+}{i}{\grbv{t}}{i} < \grbs{tol}$}{return}
+            \If{$\grbreduce{+}{i}{\grbv{t}}{i} < \grbs{tol}$}{
+                return \Comment{since 1-norm of change is small}
+            }
         }
     }
 \end{algorithm}
