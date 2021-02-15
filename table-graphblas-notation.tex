@@ -83,7 +83,6 @@
         matrices can be transposed ($\grbm{B}\grbt$),
         the mask can be complemented, and
         the mask can be valued (shown above) or structural ($\grbm{C}\grbmask{\grbstr{\grbm{M}}}$).
-        \todo{consider using $\grbm{C}\grbmask{\grbval{\grbm{M}}}$ for valued}
         A structural mask can also be complemented ($\grbm{C}\grbmask{\grbneg\grbstr{\grbm{M}}}$).
         The result can be cleared after using it as input to the mask/accumulator step ($\grbm{C}\grbmaskreplace{\grbm{M}}$).
         Not all methods are listed (creating new ops, monoids, and semirings, clearing a matrix/vector, etc.).
@@ -92,3 +91,4 @@
     }
     \label{tab:graphblas-notation}
 \end{table*}
+%\todo{consider using $\grbm{C}\grbmask{\grbval{\grbm{M}}}$ for valued}
