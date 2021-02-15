@@ -4,38 +4,34 @@
 	%\KwData{...}
 	%\KwResult{...}
 	\Fn{BrandesBC}{
-		\Comment{The $\grbm{NumSp}$ structure holds the number of shortest paths for each node and starting vertex discovered so far.}
-		\Comment{Initialized to source vertices.}
-		$\grbm{NumSp} \grbassign \{ \grba{s}, [1, 1, \ldots, 1] \}$ \;
-		\Comment{The $\grbm{Frontier}$ holds the number of shortest paths for each node and starting vertex discovered so far.}
-		$\grbm{Frontier} \grbassign \{ \grba{s}, [1, 1, \ldots, 1] \}$ \;
-                $\grbm{Frontier} \grbmaskreplace{\grbneg\grbstr{\grbm{NumSp}}} =\grbm{Frontier} \grbplusfirst \grbm{A}$ 
-		\Comment{The $\grbm{Sigmas}$ matrices store frontier information for each level of the BFS phase.}
-		\Comment{BFS phase (forward sweep)}
+		\Comment{$\grbm{P}(k,j)$ = \# paths from $k$th source to node $j$}
+		$\grbm{P} \grbassign \{ \grba{s}, [1, 1, \ldots, 1] \}$ \;
+		\Comment{$\grbm{F}$: \# paths in the current frontier}
+		$\grbm{F} \grbassign \{ \grba{s}, [1, 1, \ldots, 1] \}$ \;
+                $\grbm{F} \grbmaskreplace{\grbneg\grbstr{\grbm{P}}} =\grbm{F} \grbplusfirst \grbm{A}$  \;
+
+		\Comment{BFS phase}
 		\For{$\grbs{d} = 0$ \KwTo $\grbnrows{\grbm{A}}$}{
-			\Comment{$\grbm{Sigmas}[\grbs{d}](:, \grbs{s}) = \grbs{d}^{\textrm{th}}$ level frontier from source vertex $\grbs{s}$}
-			$\grbnewmatrix{\grbm{Sigmas}[\grbs{d}]}{\grbbool}{}{\grbs{n}}{\grbs{nsver}} $ \;
-                        % the '(:, :)' is there to express 'assign' instead of 'dup':
-			$\grbm{Sigmas}[\grbs{d}](:,:) = \grbm{Frontier} $ \Comment*{Convert matrix to Boolean}
-			$\grbm{NumSp} \grbaccumeq{+} \grbm{Frontier}$ \Comment*{Accumulate path counts}
-			$\grbm{Frontier}\grbmaskreplace{\grbneg\grbstr{\grbm{NumSp}}} = \grbm{Frontier} \grbplusfirst \grbm{A}$ \Comment*{Update frontier}
-                        \If{$\grbnvals{\grbm{Frontier}} = 0$}{break}
+			$\grbnewmatrix{\grbm{S}[\grbs{d}]}{\grbbool}{}{\grbs{ns}}{\grbs{n}} $ \;
+			$\grbm{S}[\grbs{d}]\grbmask{\grbstr{\grbm{F}}} = 1$ \Comment{$\grbm{S}[d]$ = pattern of $\grbm{F}$}
+			$\grbm{P} \grbaccumeq{+} \grbm{F}$ \;
+			$\grbm{F}\grbmaskreplace{\grbneg\grbstr{\grbm{P}}} = \grbm{F} \grbplusfirst \grbm{A}$ \;
+                        \If{$\grbnvals{\grbm{F}} = 0$}{break}
 		}
 
-		$\grbnewmatrix{\grbm{BCU}}{\grbfloat}{32}{\grbs{n}}{\grbs{nsver}}$ \;
-		$\grbm{BCU}(:) = 1.0$ \Comment*{Make $\grbm{BCU}$ dense, initialize all elements to $1.0$}
-		$\grbnewmatrix{\grbm{W}}{\grbfloat}{32}{\grbs{n}}{\grbs{nsver}}$ \;
+		\Comment{Backtrack phase}
+		$\grbnewmatrix{\grbm{B}}{\grbfloat}{64}{\grbs{ns}}{\grbs{n}}$ \;
+		$\grbm{B}(:) = 1.0$ \;
+		$\grbnewmatrix{\grbm{W}}{\grbfloat}{64}{\grbs{ns}}{\grbs{n}}$ \;
 
-		\Comment{Tally phase (backward sweep)}
 		\For{$\grbs{i} = \grbs{d} - 1$ \KwDownto $0$}{
-			$\grbm{W}\grbmaskreplace{\grbstr{\grbm{Sigmas}[\grbs{i}]}} = \grbm{BCU}  \grbdiv_\cap \grbm{NumSp}$ \;
-			$\grbm{W}\grbmaskreplace{\grbstr{\grbm{Sigmas}[\grbs{i} - 1]}} = \grbm{W} \grbplusfirst \grbm{A}\grbt$
-                        \Comment*{Add contributions by successors and mask with that BFS level's frontier.}
-			$\grbm{BCU} \grbaccumeq{+} \grbm{W} \times_\cap \grbm{NumSp}$ \;
+			$\grbm{W}\grbmaskreplace{\grbstr{\grbm{S}[\grbs{i}]}} = \grbm{B}  \grbdiv_\cap \grbm{P}$ \;
+			$\grbm{W}\grbmaskreplace{\grbstr{\grbm{S}[\grbs{i} - 1]}} = \grbm{W} \grbplusfirst \grbm{A}\grbt$ \;
+			$\grbm{B} \grbaccumeq{+} \grbm{W} \times_\cap \grbm{P}$ \;
 		}
 
-		\Comment{Row reduce $\grbm{BCU}$ and subtract $\grbs{nsver}$ from every entry to account for 1 extra value per $\grbm{BCU}$ row element}
-		$\grbv{delta}(:) = -\grbs{nsver}$ \;
-		$\grbv{delta} \grbaccumeq{+} \grbreduce{+}{\grbs{j}}{\grbm{BCU}}{:, \grbs{j}} $ \;
+		\Comment{$\grbv{centrality}(j) = \sum_i (\grbm{B}(i,j) - 1)$}
+		$\grbv{centrality}(:) = -\grbs{ns}$ \;
+		$\grbv{centrality} \grbaccumeq{+} \grbreduce{+}{\grbs{i}}{\grbm{B}}{\grbs{i},:} $ \;
 	}
 \end{algorithm}
