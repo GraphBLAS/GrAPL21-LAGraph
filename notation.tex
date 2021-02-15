@@ -158,22 +158,8 @@ $\grbmaskreplace{\grbstr{\grbm{M}}}$
 
 \subsection{Methods}
 
-
-
-% methods don't use masks
-
-% Initializing scalars, vectors, and matrices (GraphBLAS methods):
-
-% \begin{itemize}
-%     \item $\grbnewscalar{\grbs{s}}{\grbfloat}{64}$
-%     \item $\grbnewvector{\grbv{w}}{\grbfloat}{32}{n}$
-%     \item $\grbnewmatrix{\grbm{A}}{\grbuint}{16}{m}{n}$
-%     \item $\grbnewmatrix{\grbm{A}}{\grbint}{64}{k}{m}$
-% \end{itemize}
-
-% \begin{tabular}{ll}
-%     $\grbm{C}\grbmask{\grbm{M}}$                 & compute for nodes selected by the values of $\grbm{M}$ & keep       \\
-%     $\grbm{C}\grbmaskreplace{\grbm{M}}$          & compute for nodes selected by the values in $\grbm{M}$ & discard  \\
-%     $\grbm{C}\grbmask{\grbstr{\grbm{M}}}$        & compute for nodes selected by the pattern of $\grbm{M}$ & keep      \\
-%     $\grbm{C}\grbmaskreplace{\grbstr{\grbm{M}}}$ & compute for nodes selected by the pattern of $\grbm{M}$ & discard \\
-% \end{tabular}
+\grb provides methods for initializing and duplicating vectors and matrices,
+($\grbnewvector{\grbv{w}}{\grbfloat}{32}{n}$ and $\grbm{C} \grbassign \grbm{A}$),
+setting the values of individual elements ($\grbv{w}(2) = \grbtrue$),
+extract the tuples in the form of index/value arrays from matrices/vectors and build them from tuples ($\grbv{w} \grbassign \left\{ \grba{i}, \grba{x} \right\}$ and $\left\{ \grba{i}, \grba{x} \right\} \grbassign \grbv{u}$).
+Additionally, methods are provided for creating new operators, monoids, and semirings, clearing a matrix/vector, etc.
