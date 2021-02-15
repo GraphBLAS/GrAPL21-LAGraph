@@ -58,9 +58,9 @@ parent $k$.
 
 \input{algorithms/bc}
 %
-The vertex betweenness-centrality metric is a weighted measure of the number of
-shorted paths that go through any given node,
-\[ \sum_{s \ne i \ne t} \frac{\sigma (s, t|i)}{\sigma{s,t}}, \]
+The vertex betweenness-centrality metric is based on the number of
+shortest paths through any given node,
+$ \sum_{s \ne i \ne t} {\sigma (s, t|i)}/{\sigma(s,t)}, $
 where $\sigma(s,t)$ is the total number of shortest paths from node $s$ to $t$,
 and $\sigma(s,t|i)$ is the total number of shortest paths from node $s$ to $t$
 that pass through node $i$.  This is expensive to compute, so in practice,
