@@ -13,13 +13,15 @@ We first give a brief overview of the theoretical aspects of the \grb. For more 
 \paragraph{Data structures}
 \grb builds on the duality between the graph and matrix data structures.
 Namely, a directed graph $G = (V, E)$ can be represented with an \emph{adjacency matrix} $\grbm{A} \in \grbbool^{|V| \times |V|}$ where $\grbm{A}_{i,j} = \grbtrue$ iff $(v_i, v_j) \in E$.
-Adjacency matrices are not always square: induced subgraphs where source nodes are selected from $V_1$ and target nodes are selected from $V_2$ ($V_1, V_2 \subseteq V$) can be represented with $\grbm{A} \in \grbbool^{|V_1| \times |V_2|}$.
+The adjacency matrices used in \grb algorithms are not necessarily square: \eg induced subgraphs, where source nodes are selected from $V_1$ and target nodes are selected from $V_2$ ($V_1, V_2 \subseteq V$), can be represented with $\grbm{A} \in \grbbool^{|V_1| \times |V_2|}$.
 \emph{Vectors} are used to encode data for nodes, \eg $\grbv{u} \in \grbbool^{|V|}$ can be used to select a subset of nodes.
 Vectors and matrices can be defined over different types, \eg a nonnegative integer ($\grbuint$) matrix can encode the number of paths between two nodes, while a floating point ($\grbdouble$) matrix can encode edge weights.
 
-The transposed variant of matrix~$\grbm{A} \in D^{n \times m}$ is denoted with $\grbm{A}\grbt \in D^{m \times n}$ where $\grbm{A}\grbt(i, j) = \grbm{A}(j, i)$.
-For adjacency matrix~$\grbm{A}$, matrix~$\grbm{A}\grbt$ contains the edges in the reverse direction.
-For vectors $\grbm{u}$ denotes a column vector and $\grbm{u}\grbt$ denotes a row vector.
+The transposition of~$\grbm{A} \in D^{n \times m}$ is denoted with $\grbm{A}\grbt \in D^{m \times n}$ where $\grbm{A}\grbt(i, j) = \grbm{A}(j, i)$.  Compared to $\grbm{A}$, matrix~$\grbm{A}\grbt$ contains the edges in the reverse direction.
+For vectors, $\grbm{u}$ denotes a column vector and $\grbm{u}\grbt$ denotes a row vector.
+
+In practice, the adjacency matrices representing graphs are sparse, \ie most of their elements are \emph{zeros}, lending themselves to compressed representations such as CSR/CSC.
+The \emph{zero elements} take their values during operations based on the identity value of the semiring's $\grbplus$ operation (see below).
 
 %We refer to the graph represented by adjacency matrix~$\grbm{A}$ as ``the graph of $\grbm{A}$''.
 
@@ -27,12 +29,10 @@ For vectors $\grbm{u}$ denotes a column vector and $\grbm{u}\grbt$ denotes a row
 \grb uses matrix operations %(\autoref{sec:operations})
 to express graph processing primitives, \eg a matrix-vector multiplication $\grbm{A} \grbplustimes \grbm{u}$ finds incoming neighbors of the set of nodes selected by vector~$\grbv{u}$ in the graph represented by adjacency matrix~$\grbm{A}$.
 \grb allows users to perform the multiplication operations over an arbitrary \emph{semiring}.
-In general, the multiplication operator $\grbtimes$ is used to define how to combine the values of matching input elements, while the addition operator $\grbplus$ defines how the results should be summarized.
+In general, the multiplication operator $\grbtimes$ is used for combining the values of matching input elements, while the addition operator $\grbplus$ defines how the results should be summarized.
 For example, the $\grbminplus$ semiring uses $\grbplustext$ as the multiplication operator to compute the path length and $\grbmin$ as the addition operator to determine the length of the shortest path.
+The algorithms presented in this paper use a number of non-conventional semirings such as $\grbanysecondi$, $\grbplusfirst$, and $\grbpluspair$. These are summarized in \autoref{tab:semirings} and defined in \autoref{sec:evaluation}.
 
-\paragraph{Sparsity}
-In practice, the adjacency matrices representing graphs are sparse, \ie most of their elements are \emph{zeros}.
-The \emph{zero element} is the identity element of the semiring (see \autoref{tab:semirings}).
 
 \input{table-semirings}
 
@@ -131,60 +131,33 @@ $$\grbm{C}^{[\grbtransposesymbol]} \grbmask{\grbm{M}} \grbaccumeq{} \grbm{A}^{[\
 \subsection{Masks}
 \label{sec:masks}
 
-\todo{explain masks}
-
-\todo{explain replace/merge as per Scott's email}
+% \todo{explain replace/merge as per Scott's email}
 % REPLACE: C :=              M .* (C + AB)
 % MERGE:   C := (!M .* C) U [M .* (C + AB)]
+% \todo{revise Scott, Tim D, and Tim M}
 
-\todo{revise Scott, Tim D, and Tim M}
+Masks are used by all \grb operations to limit the scope of the computation \wrt the output of the operation.
+Namely, the mask prescribe that the computation only needs to be performed on the elements selected by the mask ($\grbm{m}$) or the complement of these elements ($\grbneg\grbm{m}$).
 
-\todo{consider adding semiring table}
-
-what do masks mean?
-
-the mask restricts the scope of the computation to the elements selected by the mask ($\grbm{m}$) or the complement of these elements ($\grbneg\grbm{m}$)
-
-there are variations based on
+There are variations based on
 (1)~how the elements are selected (\emph{valued} masks take the element values into consideration, while \emph{structural} masks only use the structure (pattern) of the mask
-(2)~how the elements outside the selected ones are treated (they are \emph{replaced} with implicit zeros or they are kept intact and \emph{merged} with the results of the computation)
+(2)~how the elements outside the selected ones are treated (they are \emph{replaced} with implicit zeros or they are kept intact and \emph{merged} with the results of the computation).
 
-by default, masks should use \emph{merge} semantics, i.e. the computation can only effect elements selected by the mask, elements outside the mask are unaffected
-$\grbv{w}\grbmask{\grbv{m}}$ and $\grbv{w}\grbmask{\grbneg \grbv{m}}$
+By default, masks use \emph{merge} semantics, \ie the computation can only effect elements selected by the mask, elements outside the mask are unaffected
+$\grbv{w}\grbmask{\grbv{m}}$.
+%$\grbv{w}\grbmask{\grbneg \grbv{m}}$
 
-\emph{replace} semantics, i.e. they annihilate all elements outside the mask. this is denoted with
-$\grbv{w}\grbmaskreplace{\grbv{m}}$ and $\grbv{w}\grbmaskreplace{\grbneg \grbv{m}}$
+If \emph{replace} semantics is actived, masks annihilate all elements outside the mask. This is denoted with
+$\grbv{w}\grbmaskreplace{\grbv{m}}$.
+%$\grbv{w}\grbmaskreplace{\grbneg \grbv{m}}$
 
-by default, element values in the mask are checked and elements with zero value are not used
-to avoid this, we use \emph{structural masks}
-$\grbv{w}\grbmask{\grbstr{\grbv{m}}}$ and $\grbv{w}\grbmask{\grbneg \grbstr{\grbv{m}}}$
+By default, masks are \emph{valued}, \ie values in the mask are checked and elements with zero values are not used considered to be part of the mask.
+To only consider the pattern of the mask, \emph{structural masks}: $\grbv{w}\grbmask{\grbstr{\grbv{m}}}$
+%$\grbv{w}\grbmask{\grbneg \grbstr{\grbv{m}}}$
 
-Combining \emph{replace semantics} and \emph{structural masks} is possible:
-$\grbv{w}\grbmaskreplace{\grbstr{\grbv{m}}}$
-$\grbv{w}\grbmaskreplace{\grbneg \grbstr{\grbv{m}}}$
+Combining \emph{replace semantics} and \emph{structural masks} is possible and is denoted as $\grbv{w}\grbmaskreplace{\grbstr{\grbv{m}}}$
+%$\grbv{w}\grbmaskreplace{\grbneg \grbstr{\grbv{m}}}$
 
-
-% \begin{tabular}{ll}
-%     $\grbv{w}\grbmask{\grbv{m}}$                 & compute for nodes selected by the values of $\grbv{m}$ & keep       \\
-%     $\grbv{w}\grbmaskreplace{\grbv{m}}$          & compute for nodes selected by the values in $\grbv{m}$ & discard  \\
-%     $\grbv{w}\grbmask{\grbstr{\grbv{m}}}$        & compute for nodes selected by the pattern of $\grbv{m}$ & keep      \\
-%     $\grbv{w}\grbmaskreplace{\grbstr{\grbv{m}}}$ & compute for nodes selected by the pattern of $\grbv{m}$ & discard \\
-% \end{tabular}
-
-Initializing scalars, vectors, and matrices (GraphBLAS methods):
-
-\begin{itemize}
-    \item $\grbnewscalar{\grbs{s}}{\grbfloat}{64}$
-    \item $\grbnewvector{\grbv{w}}{\grbfloat}{32}{n}$
-    \item $\grbnewmatrix{\grbm{A}}{\grbuint}{16}{m}{n}$
-    \item $\grbnewmatrix{\grbm{A}}{\grbint}{64}{k}{m}$
-\end{itemize}
-
-separate operator + descriptor ($\grbt$)
-
-vectors can be interpreted as row/column vectors, we do not transpose them manually
-
-extensions
 
 
 
@@ -192,6 +165,18 @@ extensions
 
 % methods don't use masks
 
+% Initializing scalars, vectors, and matrices (GraphBLAS methods):
 
+% \begin{itemize}
+%     \item $\grbnewscalar{\grbs{s}}{\grbfloat}{64}$
+%     \item $\grbnewvector{\grbv{w}}{\grbfloat}{32}{n}$
+%     \item $\grbnewmatrix{\grbm{A}}{\grbuint}{16}{m}{n}$
+%     \item $\grbnewmatrix{\grbm{A}}{\grbint}{64}{k}{m}$
+% \end{itemize}
 
-\todo{conversion table?}
+% \begin{tabular}{ll}
+%     $\grbv{w}\grbmask{\grbv{m}}$                 & compute for nodes selected by the values of $\grbv{m}$ & keep       \\
+%     $\grbv{w}\grbmaskreplace{\grbv{m}}$          & compute for nodes selected by the values in $\grbv{m}$ & discard  \\
+%     $\grbv{w}\grbmask{\grbstr{\grbv{m}}}$        & compute for nodes selected by the pattern of $\grbv{m}$ & keep      \\
+%     $\grbv{w}\grbmaskreplace{\grbstr{\grbv{m}}}$ & compute for nodes selected by the pattern of $\grbv{m}$ & discard \\
+% \end{tabular}
