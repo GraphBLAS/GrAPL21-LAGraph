@@ -1,4 +1,4 @@
-%\setlength{\tabcolsep}{1.9pt}
+-%\setlength{\tabcolsep}{1.9pt}
 %\renewcommand\arraystretch{0.85}
 
 \begin{table*}[htbp]
@@ -28,11 +28,11 @@
                                                  & assign vector to subvector with mask for $\grbv{w}$                                        & $\grbv{w} \grbmask{\grbv{m}} (\grba{i}) $          & $\grbaccumeq{} \grbv{u}$                                                                                                                   \\
                                                  & assign scalar to subvector with mask for $\grbv{w}$                                        & $\grbv{w} \grbmask{\grbv{m}} (\grba{i}) $          & $\grbaccumeq{} \grbs{s}$                                                              \\
         \midrule
-        \multirow{4}{*}{\tt subassign (GxB)}     & assign matrix to submatrix with submask for $\grbm{C}(\grba{i},\grba{j})$                  & $\grbm{C}(\grba{i},\grba{j}) \grbmask{\grbm{M}} $  & $\grbaccumeq{} \grbm{A}$                                                              \\
-                                                 & assign scalar to submatrix with submask for $\grbm{C}(\grba{i},\grba{j})$                  & $\grbm{C}(\grba{i},\grba{j}) \grbmask{\grbm{M}} $  & $\grbaccumeq{} \grbs{s}$                                                              \\
-                                                 & assign vector to subvector with submask for $\grbv{w}(\grba{i})$                           & $\grbv{w}(\grba{i}) \grbmask{\grbv{m}} $           & $\grbaccumeq{} \grbv{u}$                                                              \\
-                                                 & assign scalar to subvector with submask for $\grbv{w}(\grba{i})$                           & $\grbv{w}(\grba{i}) \grbmask{\grbv{m}} $           & $\grbaccumeq{} \grbs{s}$                                                              \\
-        \midrule
+        % \multirow{4}{*}{\tt subassign (GxB)}     & assign matrix to submatrix with submask for $\grbm{C}(\grba{i},\grba{j})$                  & $\grbm{C}(\grba{i},\grba{j}) \grbmask{\grbm{M}} $  & $\grbaccumeq{} \grbm{A}$                                                              \\
+        %                                          & assign scalar to submatrix with submask for $\grbm{C}(\grba{i},\grba{j})$                  & $\grbm{C}(\grba{i},\grba{j}) \grbmask{\grbm{M}} $  & $\grbaccumeq{} \grbs{s}$                                                              \\
+        %                                          & assign vector to subvector with submask for $\grbv{w}(\grba{i})$                           & $\grbv{w}(\grba{i}) \grbmask{\grbv{m}} $           & $\grbaccumeq{} \grbv{u}$                                                              \\
+        %                                          & assign scalar to subvector with submask for $\grbv{w}(\grba{i})$                           & $\grbv{w}(\grba{i}) \grbmask{\grbv{m}} $           & $\grbaccumeq{} \grbs{s}$                                                              \\
+        % \midrule
         \multirow{2}{*}{\tt apply}               & \multirow{2}{*}{apply unary operator $\mathit{f}$ with optional thunk $k$}                 & $\grbm{C} \grbmask{\grbm{M}} $                     & $\grbaccumeq{} \grbf{f}{\grbm{A}, \grbs{k}}$                                          \\
                                                  &                                                                                            & $\grbv{w} \grbmask{\grbv{m}} $                     & $\grbaccumeq{} \grbf{f}{\grbv{u}, \grbs{k}}$                                          \\
         \midrule
@@ -44,8 +44,8 @@
                                                  & reduce vector to scalar                                                                    & $\grbs{s} $                                        & $\grbaccumeq{} \grbreduce{\grbplus}{\grbs{i}}{\grbm{u}}{\grbs{i}}$                    \\
         \midrule
         \multirow{1}{*}{\tt transpose}           & transpose                                                                                  & $\grbm{C} \grbmask{\grbm{M}} $                     & $\grbaccumeq{} \grbm{A}\grbt$                                                         \\
-        \midrule
-        \tt kronecker                            & Kronecker multiplication using operator $\grbgenericop$                                    & $\grbm{C} \grbmask{\grbm{M}} $                     & $\grbaccumeq{} \grbkron{\grbm{A}, \grbgenericop, \grbm{B}}$                           \\
+        % \midrule
+        % \tt kronecker                            & Kronecker multiplication using operator $\grbgenericop$                                    & $\grbm{C} \grbmask{\grbm{M}} $                     & $\grbaccumeq{} \grbkron{\grbm{A}, \grbgenericop, \grbm{B}}$                           \\
         \midrule
         % </operations>
         % <methods>
@@ -86,8 +86,8 @@
         A structural mask can also be complemented ($\grbm{C}\grbmask{\grbneg\grbstr{\grbm{M}}}$).
         The result can be cleared after using it as input to the mask/accumulator step ($\grbm{C}\grbmaskreplace{\grbm{M}}$).
         Not all methods are listed (creating new ops, monoids, and semirings, clearing a matrix/vector, etc.).
-        For the {\tt assign} operation, the dimensions of the masks are the same as the output's: $\grbdim{\grbm{M}} = \grbdim{\grbm{C}}$ and $\grbdim{\grbv{m}} = \grbdim{\grbv{w}}$.
-        For the {\tt subassign} operation, the dimensions of the masks are the same as the submasks: $\grbnrows{\grbm{M}} = |\grba{i}|, \grbncols{\grbm{M}} = |\grba{j}|$ for matrices and $\grbdim{\grbv{m}} = |i|$ for vectors.
+        % For the {\tt assign} operation, the dimensions of the masks are the same as the output's: $\grbdim{\grbm{M}} = \grbdim{\grbm{C}}$ and $\grbdim{\grbv{m}} = \grbdim{\grbv{w}}$.
+        % For the {\tt subassign} operation, the dimensions of the masks are the same as the submasks: $\grbnrows{\grbm{M}} = |\grba{i}|, \grbncols{\grbm{M}} = |\grba{j}|$ for matrices and $\grbdim{\grbv{m}} = |i|$ for vectors.
     }
     \label{tab:graphblas-notation}
 \end{table*}
