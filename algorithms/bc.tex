@@ -5,12 +5,14 @@
 	%\KwResult{...}
 	\Fn{BrandesBC}{
 		\Comment{$\grbm{P}(k,j)$ = \# paths from $k$th source to node $j$}
-		$\grbm{P} \grbassign \{ \grba{s}, [1, 1, \ldots, 1] \}$ \;
 		\Comment{$\grbm{F}$: \# paths in the current frontier}
-		$\grbm{F} \grbassign \{ \grba{s}, [1, 1, \ldots, 1] \}$ \;
-                $\grbm{F} \grbmaskreplace{\grbneg\grbstr{\grbm{P}}} =\grbm{F} \grbplusfirst \grbm{A}$  \;
+		$\grbnewmatrix{\grbm{P}}{\grbfloat}{64}{\grbs{ns}}{\grbs{n}}$ \;
+		$\grbnewmatrix{\grbm{F}}{\grbfloat}{64}{\grbs{ns}}{\grbs{n}}$ \;
+                $\grbm{P}(1:k, \grba{s}) = 1$ \;
+                \Comment{First frontier:}
+                $\grbm{F} \grbmask{\grbneg\grbstr{\grbm{P}}} =\grbm{P} \grbplusfirst \grbm{A}$  \;
 
-		\Comment{BFS phase}
+		\Comment{BFS phase:}
 		\For{$\grbs{d} = 0$ \KwTo $\grbnrows{\grbm{A}}$}{
 			$\grbnewmatrix{\grbm{S}[\grbs{d}]}{\grbbool}{}{\grbs{ns}}{\grbs{n}} $ \;
 			$\grbm{S}[\grbs{d}]\grbmask{\grbstr{\grbm{F}}} = 1$ \Comment{$\grbm{S}[d]$ = pattern of $\grbm{F}$}
@@ -19,7 +21,7 @@
                         \If{$\grbnvals{\grbm{F}} = 0$}{break}
 		}
 
-		\Comment{Backtrack phase}
+		\Comment{Backtrack phase:}
 		$\grbnewmatrix{\grbm{B}}{\grbfloat}{64}{\grbs{ns}}{\grbs{n}}$ \;
 		$\grbm{B}(:) = 1.0$ \;
 		$\grbnewmatrix{\grbm{W}}{\grbfloat}{64}{\grbs{ns}}{\grbs{n}}$ \;
