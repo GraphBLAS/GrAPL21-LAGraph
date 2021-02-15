@@ -82,7 +82,7 @@ accumulated (where $ns=4$ is a typical batch size).
 To simplify the presentation of the entire BC algorithm, \autoref{alg:bc} does
 not show the direction-optimization.  It is the same transformation as the pair
 of BFS algorithms, where the push-only step (line 5 of
-\autoref{alg:bfs-parents}), is expanded to a push/pull hueristic (lines 4-7 of
+\autoref{alg:bfs-parents}), is expanded to a push/pull heuristic (lines 4-7 of
 \autoref{alg:bfs-parents-do}).
 
 %-------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ of BFS algorithms, where the push-only step (line 5 of
 
 PageRank (PR) computes the importance of each node as a recursively-defined
 metric: a web page is important if important pages link to it.
-\autoref{alg:pagerank} shows the GraphBLAS implemenation of PR as specified in
+\autoref{alg:pagerank} shows the GraphBLAS implementation of PR as specified in
 the GAP Benchmark.  It uses the $\grbplussecond$ semiring, where
 $\grboperator{second}(x,y)=y$, so it can ignore any edge weights in the input
 matrix.  The PR in GAP does not properly handle dangling vertices in the graph.
@@ -146,7 +146,7 @@ particular algorithm.
 The connected components algorithm in LAGraph (\autoref{alg:fastsv})
 is written by Zhang, Azad, and Bulu{\c{c}}
 \cite{ZHANG202014,DBLP:conf/ppsc/ZhangAH20}.  The method maintains a forest of
-trees represented by a parent vector, and interatively merges trees until no
+trees represented by a parent vector, and iteratively merges trees until no
 more merging is possible.  The method as shown in \autoref{alg:fastsv} is a
 simplified variant that it operates on the entire graph.  In the LAGraph
 version, a subgraph is constructed first, and the method finds the connected

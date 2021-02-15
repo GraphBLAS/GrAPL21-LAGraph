@@ -143,7 +143,7 @@ push/pull optimization in BC resulted in a nearly 2x performance gain in the
 GraphBLAS method for the largest matrices, as compared to the SS:GrB version
 used for the results presented in \cite{DBLP:conf/iiswc/AzadABBCDDDDFGG20}.
 
-With this change the BC method in LAGraph+SS:GrB is not only expressible in a
+With this change, the BC method in LAGraph+SS:GrB is not only expressible in a
 simple, elegant code, but it is also faster than the highly-tuned GAP benchmark
 method, \verb'bc.cc', for the three largest matrices (1.3x for Kron, 1.5x for
 Urand, and 1.2x for Twitter).
@@ -182,7 +182,7 @@ changed in GraphBLAS, but rather than ``fixing'' GraphBLAS to use smaller
 integers, it is the GAP algorithms that would need to be updated for larger
 graphs in the future.  In the current GAP benchmark graphs, two graphs are
 chosen with almost exactly 4 billion edges.  Graphs of current interest in
-large data science can easily exceeed $2^{32}$ nodes and edges \cite{9286235}.
+large data science can easily exceed $2^{32}$ nodes and edges \cite{9286235}.
 
 \item In GraphBLAS, the BFS must be expressed as two calls.  The first computes
 $\grbv{q} \grbmask{\grbneg \grbv{p}} = \grbv{q}\grbt \grbm{A}$, and the second updates the parent vector,

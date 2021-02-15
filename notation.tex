@@ -40,7 +40,7 @@ The algorithms presented in this paper use a number of non-conventional semiring
 
 \paragraph{Masks and accumulators}
 All \grb operations whose output is a vector or a matrix allow the use of masks to limit the scope of the computation and an accumulator $\grbaccum$, a binary operator, that determines how the result of an operation should be applied to its output. %? ~\cite{DBLP:conf/ipps/AzadBG15}
-The semantics of masks are that the computation should be performed
+The semantics of masks is that the computation should be performed
 on a given set of nodes (for vector masks) or
 on a given set of edges (for matrix masks).
 The accumulator determines how the results should be applied to the (potentially non-empty) output matrix/vector.
@@ -88,7 +88,7 @@ For adjacency matrix~$\grbm{A}$,
 the \emph{extract submatrix} operation $\grbm{A}(\grba{i}, \grba{j})$ returns a matrix containing the elements from $\grbm{A}$ with
 row indices in $\grba{i}$ and
 column indices in $\grba{j}$.
-In graph terms, the submatrix represents an the induced subgraph where
+In graph terms, the submatrix represents an induced subgraph where
 the source nodes of the edges are in array $\grba{i}$ and
 the target nodes of the edges are in array $\grba{j}$.
 The \emph{extract vector} operation $\grbv{A}(\grbs{i}, :)$ selects a column vector containing node $\grbs{i}$'s neighbors along incoming edges.
@@ -155,10 +155,10 @@ There are three variations on the mask that impact the output of a \grb operatio
     \item
         How the elements are selected?
         By default, masks are \emph{valued}, \ie values in the mask are checked and elements with explicit zero values (\eg 0 for $\grbarithmeticplustimestext$) are not considered to be part of the mask.
-        To only consider the pattern of the mask, \ie the elements of the mask that exist, a \emph{structural mask} should be used, denoted with $\grbmask{\grbstr{\grbm{M}}}$.
+        To only consider the pattern of the mask, \ie the elements of the mask that exist, a \emph{structural mask} should be used, denoted with $\grbmask{\grbstr{\grbm{M}}}$. %and $\grbmask{\grbneg\grbstr{\grbm{M}}}$ for negated masks.
 \end{enumerate}
 
-Combining \emph{replace semantics} and \emph{structural masks} is possible and is denoted with
+Operations can use \emph{replace semantics} and \emph{structural masks} at the same, denoted with
 $\grbmaskreplace{\grbstr{\grbm{M}}}$
 
 \subsection{Methods}

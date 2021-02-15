@@ -10,17 +10,17 @@ There are multiple ways to build libraries of graph algorithms.  One approach
 views graphs in terms of sparse matrices and graph algorithms in terms of 
 linear algebra. This perspective led to the 
 GraphBLAS~\cite{DBLP:conf/hpec/MattsonBBBDFFGGHKLLPPRSWY13,DBLP:conf/hpec/MattsonYMBM17}; 
-a community effort~\cite{GraphBLASforum} to define low level building blocks for graph algorithms as linear algebra.
+a community effort~\cite{GraphBLASforum} to define low-level building blocks for graph algorithms as linear algebra.
 The GraphBLAS are for graph algorithm \emph{developers}.  They are too 
 low-level for graph algorithm \emph{users}.  To focus on users and the 
 algorithms they require, we launched the
 LAGraph project~\cite{DBLP:conf/ipps/MattsonDKBMMY19}.  
 
 The LAGraph project will produce a library 
-of high quality, production-worthy algorithms constructed on top 
+of high quality, production-worthy algorithms constructed on top of
 the GraphBLAS.  In this paper, we describe the first release of LAGraph~\cite{LAGraphRepo}.
-While LAGraph will eventually work with any implementation of the GraphBLAS, it is currently tied to the
-the SuiteSparse GraphBLAS library~\cite{SuiteSparseGraphBLAS} (SS:GrB).
+While LAGraph will eventually work with any implementation of the GraphBLAS, it is currently tied to
+the \ssgrb library~\cite{SuiteSparseGraphBLAS} (SS:GrB).
 
 In this release of LAGraph, we restricted ourselves to versions of the algorithms found in the GAP benchmarks.
 This restricted scope allowed us to focus on the key design decisions needed to establish a solid
