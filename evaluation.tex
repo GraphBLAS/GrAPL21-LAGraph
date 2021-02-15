@@ -55,9 +55,9 @@ been deleted from the matrix.  With the lazy sort, the sort is postponed until
 another algorithm requires sorted input matrices.  If the sort is lazy enough,
 it might never occur, which is the case for the LAGraph BFS and BC.
 
-Another useful addition to SS:GrB is the new positional binary operators,
-such as the $\grbanysecondi$ %ANY-SECONDI
-used in the BFS.
+Positional binary operators have also been added,
+such as the $\grbanysecondi$ semiring, %ANY-SECONDI
+which makes the BFS much faster.
 
 \subsection{Performance Results}
 
@@ -66,7 +66,7 @@ NVIDIA in support of this research).  It includes a 20-core Intel(R) Xeon(R)
 CPU E5-2698 v4 @ 2.20GHz, with 40 threads.  All codes were compiled with gcc
 5.4.0 (-O3).  All default settings were used, which means that hyperthreading
 was enabled.  The system has 256GB of RAM in a single socket (no NUMA effects).
-LAGraph (Feb 7, 2021) and SuiteSparse:GraphBLAS 4.0.4-draft (Feb 7, 2021) were
+LAGraph (Feb 15, 2021) and SuiteSparse:GraphBLAS 4.0.4-draft (Feb 15, 2021) were
 used.  The NVIDIA DGX Station includes four P100 GPUs, but no GPUs were used by
 this experiment (a GPU-accelerated SS:GrB is in progress).
 Table~\ref{table:results} lists the run time (in seconds) for the GAP benchmark
@@ -211,7 +211,7 @@ a tiny amount of work.  Each call to GraphBLAS does several \verb'malloc' and
 version of SS:GrB is planned that will eliminate this work entirely, by
 implementing an internal memory pool.  There may be other overheads, but we
 hope that a memory pool, fusion to fully exploit non-blocking mode, and other
-optimization will address this large performance gap for the Road graph for
+optimizations will address this large performance gap for the Road graph for
 these algorithms.
 
 LAGraph+SS:GrB is also up to 3x slower than the GAP for the triangle counting
