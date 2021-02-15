@@ -1,10 +1,19 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-Future work - ideas:
+In this paper we have introduced the LAGraph library, the rationale behind our design decisions 
+and have established a performance baseline based on the GAP benchmark suite.  This will 
+allow us to track performance enhancements as the library evolves.  We also introduced
+a notation for describing graph algorithms expressed in terms of linear algebra.  It is our hope that this
+notation will lead to a lively discussion leading to a consensus notation the 
+larger ``Graphs as Linear Algebra'' community might adopt.
 
-\begin{itemize}
-    \item Create a Python wrapper for LAGraph
-    \item Implement the LDBC Graphalytics benchmark~\cite{DBLP:journals/pvldb/IosupHNHPMCCSAT16}
-    \item Improve data ingestion performance using \eg SIMD instructions~\cite{DBLP:journals/vldb/LangdaleL19}
-\end{itemize}
+This is very much a foundational paper to support our ongoing work one the LAGraph project.  
+We plan to explore Python wrappers for LAGraph that work well with workflows common in the data analytics community.  
+In addition to the GAP benchmark suite, which is focussed on a key set of graph algorithms, we will next 
+investigate end-to-end workflows based on the LDBC Graphalytics benchmark~\cite{DBLP:journals/pvldb/IosupHNHPMCCSAT16}.
+
+Algorithmically we see a number of research directions to pursue.   With end-to-end workflows, the performance
+of data ingestion heavily impacts overall performance.  We are interested in improving data ingestion performance
+by exploiting the CPUs SIMD instructions~\cite{DBLP:journals/vldb/LangdaleL19}.  We are also interested in how 
+the LAGraph algorithms map onto the GPU using future versions of the GraphBLAS optimized for GPUs.
