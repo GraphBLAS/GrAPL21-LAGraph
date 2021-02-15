@@ -1,20 +1,23 @@
 \section{Design Decisions}
 \label{sec:decisions}
 
-\todo{Jim}
+LAGraph sits between algorithm developers, GraphBLAS implementations, and end users who want to use graph algorithms.
+Our overarching design principle is we want LAGraph to be easy to use,
+but we also need it to be flexible enough to handle advanced use cases.
+We don't wish to compromise performance, but when the tradeoff between convenience and performance
+is unavoidable, we offer both and let the user choose.
+LAGraph has a set of data structures, utility functions, and conventions
+that make it convenient for algorithm developers to write algorithms on top of GraphBLAS.
+By following these conventions, end users get an approachable API and consistent user experience.
 
 We investigate the following design questions:
-
+% Should we delete this list?
 \begin{itemize}
     \item data structure for representing a graph
     \item basic/advanced mode
     \item algorithm calling conventions
     \item error handling
     \item user-contributed algorithms
-    \item ---------
-    \item how to work around typecasting being expensive in GraphBLAS
-    \item terminology: properties (parameters? features?)
-    \item multi-threadable
 \end{itemize}
 
 
@@ -52,7 +55,7 @@ LAGraph_Property_AT(G, msg);  |$\label{line:ComputeTranspose}$|// compute/cache
 \end{listing}
 
 The primary data structure in LAGraph is the \verb'LAGraph_Graph' which consists of primary components
-and cached properties. The data structure is not opaque, providing the user with full access to access and
+and cached properties. The data structure is not opaque, providing the user with full ability to access and
 modify all internal components, unlike the way GraphBLAS objects behave.  This data structure is 
 shown at the top of Listing~\ref{Lst.graph} and defined ultimately on Line~\ref{line:LAGraph_Graph}.
 
@@ -71,7 +74,7 @@ algorithm call signatures. Utility functions exist to compute each cached proper
 Line~\ref{line:ComputeTranspose} of Listing~\ref{Lst.graph} will compute the transpose of \verb'G->A' and store it as \verb'G->AT'.
 Following this call, any algorithm which is given \verb'G' will have access to both \verb'A' and its transpose.
 
-Because the Graph object is opaque, any piece of code may set the transpose as well. For instance, if an algorithm
+Because the Graph object is not opaque, any piece of code may set the transpose as well. For instance, if an algorithm
 computes the transpose as part of its normal logic, it could directly set \verb'G->AT'.
 The expectation is that the Graph object will always remain consistent.
 If \verb'G->A' is modified, all cached properties must be either be set as unknown or modified to reflect the change.
