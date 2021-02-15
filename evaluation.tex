@@ -11,7 +11,7 @@ LAGraph API on the 6 algorithms in the GAP Benchmark
 \label{sec:extensions}
 
 In a prior paper (\cite{DBLP:conf/iiswc/AzadABBCDDDDFGG20}), an early draft of
-SuiteSparse:GraphBLAS v4.0.0 (Aug 2020) was compared with the GAP benchmark
+SS:GrB, (SuiteSparse:GraphBLAS v4.0.0, Aug 2020), was compared with the GAP benchmark
 \cite{DBLP:conf/sc/BeamerAP12} and four other graph libraries.  This prior
 version of SS:GrB included two primary data structures for its sparse matrices:
 compressed sparse vector, and a hypersparse variant
@@ -65,7 +65,8 @@ Our benchmark environment is an NVIDIA DGX Station (donated to Texas A\&M by
 NVIDIA in support of this research).  It includes a 20-core Intel(R) Xeon(R)
 CPU E5-2698 v4 @ 2.20GHz, with 40 threads.  All codes were compiled with gcc
 5.4.0 (-O3).  All default settings were used, which means that hyperthreading
-was enabled.  The system has 256GB of RAM in a single socket (no NUMA effects).
+was enabled.  The system has 256GB of RAM in a single socket.
+%  There are NUMA effects in a single socket system with 20 cores .... so I deleted this parenthetical comment (no NUMA effects).
 LAGraph (Feb 15, 2021) and SuiteSparse:GraphBLAS 4.0.4-draft (Feb 15, 2021) were
 used.  The NVIDIA DGX Station includes four P100 GPUs, but no GPUs were used by
 this experiment (a GPU-accelerated SS:GrB is in progress).
@@ -174,7 +175,7 @@ the remaining performance gap arises from two issues:
 
 \begin{enumerate}
 \item
-The GAP assumes that the graph has fewer than $2^{32}$ nodes and edges, and
+GAP assumes that the graph has fewer than $2^{32}$ nodes and edges, and
 thus uses 32-bit integers throughout.  GraphBLAS is written for larger
 problems, and thus relies solely on 64-bit integers.  This cannot be easily
 changed in GraphBLAS, but rather than ``fixing'' GraphBLAS to use smaller
@@ -192,7 +193,7 @@ $\grbv{p} \grbmask{\grbstr{\grbv{q}}} = \grbv{q}$:
   GrB_vxm (q, p, NULL, semiring, q, A, GrB_DESC_RSC) ;
   GrB_assign (p, q, NULL, q, GrB_ALL, n, GrB_DESC_S) ; \end{verbatim}}
 
-In Scott Beamer's \verb'bfs.cc', these two steps are fused, and the
+In GAP's \verb'bfs.cc', these two steps are fused, and the
 matrix-vector multiplication can write its result directly into the parent vector
 \verb'p'.  This could be implemented in a future GraphBLAS library, since the
 GraphBLAS API allows for a non-blocking mode where work is queued and done

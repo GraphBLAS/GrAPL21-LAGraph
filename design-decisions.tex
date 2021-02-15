@@ -3,23 +3,12 @@
 
 LAGraph sits between algorithm developers, GraphBLAS implementations, and end users who want to use graph algorithms.
 Our overarching design principle is we want LAGraph to be easy to use,
-but we also need it to be flexible enough to handle advanced use cases.
+but also flexible enough to handle advanced use cases.
 We don't wish to compromise performance, but when the tradeoff between convenience and performance
 is unavoidable, we offer both and let the user choose.
-LAGraph has a set of data structures, utility functions, and conventions
+LAGraph includes a set of data structures, utility functions, and conventions
 that make it convenient for algorithm developers to write algorithms on top of GraphBLAS.
 By following these conventions, end users get an approachable API and consistent user experience.
-
-We investigate the following design questions:
-% Should we delete this list?
-\begin{itemize}
-    \item data structure for representing a graph
-    \item basic/advanced mode
-    \item algorithm calling conventions
-    \item error handling
-    \item user-contributed algorithms
-\end{itemize}
-
 
 \subsection{Core data structure}
 
@@ -56,7 +45,7 @@ LAGraph_Property_AT(G, msg);  |$\label{line:ComputeTranspose}$|// compute/cache
 
 The primary data structure in LAGraph is the \verb'LAGraph_Graph' which consists of primary components
 and cached properties. The data structure is not opaque, providing the user with full ability to access and
-modify all internal components, unlike the way GraphBLAS objects behave.  This data structure is 
+modify all internal components. This contrasts with the opaque objects in the GraphBLAS.  This data structure is 
 shown at the top of Listing~\ref{Lst.graph} and defined ultimately on Line~\ref{line:LAGraph_Graph}.
 
 The primary components of this struct are a GraphBLAS matrix named \verb'A' and an enumeration \verb'kind'.
@@ -65,11 +54,11 @@ Currently, the only kinds defined are \verb'LAGRAPH_ADJACENCY_UNDIRECTED' and
 \verb'LAGRAPH_ADJACENCY_DIRECTED', but more options will be added in the future.  Creating the 
 Graph object is performed on Line~\ref{line:CreateGraphObject} of Listing~\ref{Lst.graph}.
 Following this call, \verb'M' will be \verb'NULL'. The matrix previously pointed to by \verb'M' now
-lives at \verb'G->A'. This ``move'' constructor helps avoid memory freeing errors.
+lives at \verb'G->A'. This ``move'' constructor helps avoid memory-freeing errors.
 
 Cached properties include the transpose of \verb'A', the row degrees, column degrees, etc.
 They can be computed from the primary components, but doing so repeatedly for each algorithm
-utilizing \verb'A' would be wasteful. Having them live inside the Graph object helps simplify
+utilizing \verb'A' would be wasteful. Having them live inside the Graph object simplifies
 algorithm call signatures. Utility functions exist to compute each cached property.  For example,
 Line~\ref{line:ComputeTranspose} of Listing~\ref{Lst.graph} will compute the transpose of \verb'G->A' and store it as \verb'G->AT'.
 Following this call, any algorithm which is given \verb'G' will have access to both \verb'A' and its transpose.
@@ -85,8 +74,8 @@ This expectation is a convention that all LAGraph algorithm implementers are exp
 
 \subsection{User modes}
 
-Algorithms in LAGraph target two types of user modes: Basic and Advanced. The Basic user mode is for those wanting
-things to ``just work'', are less concerned about performance, and may be less experienced with the library.
+Algorithms in LAGraph target two user modes: Basic and Advanced. The Basic user mode is for those who want
+things to ``just work'', are less concerned about performance, and may be less experienced with graph libraries.
 The Advanced user mode is for those whose primary concern is performance and are willing to conform to stricter
 requirements to achieve that goal.
 
@@ -154,7 +143,7 @@ It also supports Basic mode algorithms which may modify a Graph object by adding
 
 Inputs are passed by value and should never be changed by the algorithm.
 
-The final argument of any LAGraph algorithm is the error message holder. This must be \verb'char[]' of
+The final argument of any LAGraph algorithm holds the error message. This must be \verb'char[]' of
 size \verb'LAGRAPH_MSG_LEN'. When the algorithm returns an error or a warning, a message may be placed in
 this array as additional information. Because the caller creates this array, the caller must free
 the memory or reuse it as appropriate. If the algorithm is successful, it should fill the message array
@@ -191,13 +180,13 @@ error checking while writing graph algorithms.
 
 \subsection{Contributing algorithms}
 
-The LAGraph project welcomes contributions from all graph practitioners who understand the GraphBLAS vision
+The LAGraph project welcomes contributions from graph practitioners who understand the GraphBLAS vision
 of using the language of linear algebra to express graph computations. However, as a matter of
 practical concern, many users want a stable experience when using LAGraph for doing real work. To balance
 these, the LAGraph repository will have both a stable and an experimental folder.
 
 New algorithms or modifications of existing algorithms will first be added to the experimental folder.
-The release schedule of experimental algorithms will generally be much faster than the stable release
+The release schedule of experimental algorithms will generally be much faster than the stable release,
 and there is no expectation of a bug-free experience.
 The goal is to generate lots of ideas and allow uninhibited contributions to
 push the boundary of what is possible with the GraphBLAS. The stable release will be fully tested and

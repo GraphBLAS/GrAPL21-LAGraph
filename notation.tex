@@ -12,8 +12,8 @@ and nodes are selected using vectors.\footnote{We use these specialized vectors/
 We first give a brief overview of the theoretical aspects of the \grb. For more details, we refer the reader to tutorials~\cite{gabor_szarnyas_2020_4318870} and the specification documents~\cite{GraphBLASv13,GxBUserGuide}.
 
 \paragraph{Data structures}
-\grb builds on the duality between the graph and matrix data structures.
-Namely, a directed simple graph $G = (V, E)$ can be represented with a boolean \emph{adjacency matrix} $\grbm{A} \in \grbbool^{|V| \times |V|}$ where $\grbm{A}_{i,j} = \grbtrue$ iff $(v_i, v_j) \in E$.
+\grb builds on the duality between graph and matrix data structures.
+Namely, a directed graph $G = (V, E)$ can be represented with a boolean \emph{adjacency matrix} $\grbm{A} \in \grbbool^{|V| \times |V|}$ where $\grbm{A}_{i,j} = \grbtrue$ iff $(v_i, v_j) \in E$.
 The adjacency matrices used in \grb algorithms are not necessarily square: \eg induced subgraphs, where source nodes are selected from $V_1 \subseteq V$ and target nodes are selected from $V_2 \subseteq V$, can be represented with $\grbm{A} \in \grbbool^{|V_1| \times |V_2|}$.
 The transposition of~$\grbm{A} \in D^{n \times m}$ is denoted with $\grbm{A}\grbt \in D^{m \times n}$ where $\grbm{A}\grbt(i, j) = \grbm{A}(j, i)$.
 Compared to $\grbm{A}$, matrix~$\grbm{A}\grbt$ contains the edges in the reverse direction.
@@ -22,8 +22,8 @@ Compared to $\grbm{A}$, matrix~$\grbm{A}\grbt$ contains the edges in the reverse
 For vectors, $\grbm{u}$ denotes a column vector and $\grbm{u}\grbt$ denotes a row vector.
 Vectors and matrices can be defined over different types, \eg a ($\grbuint$) matrix can encode the number of paths between two nodes, while a floating point ($\grbdouble$) matrix can encode edge weights.
 
-In practice, the adjacency matrices representing graphs are sparse, \ie most of their elements are \emph{zeros}, lending themselves to compressed representations such as CSR/CSC.
-The \emph{zero elements} take their values during operations based on the identity value of the semiring's $\grbplus$ operation (see below).
+In practice, adjacency matrices representing graphs are sparse, \ie most of their elements are \emph{zero}, lending themselves to compressed representations such as CSR/CSC.
+The \emph{zero elements} take their values during operations based on the identity of the semiring's $\grbplus$ operation (see below).
 
 %We refer to the graph represented by adjacency matrix~$\grbm{A}$ as ``the graph of $\grbm{A}$''.
 
@@ -32,15 +32,15 @@ The \emph{zero elements} take their values during operations based on the identi
 to express graph processing primitives, \eg a matrix-vector multiplication $\grbm{A} \grbplustimes \grbm{u}$ finds the incoming neighbors of the set of nodes selected by vector~$\grbv{u}$ in the graph of~$\grbm{A}$.
 
 \grb allows users to perform the multiplication operations over an arbitrary \emph{semiring}.
-In general, the multiplication operator $\grbtimes$ is used for combining the values of matching input elements, while the addition operator $\grbplus$ defines how the results should be summarized.
+The multiplication operator $\grbtimes$ is used for combining the values of matching input elements, while the addition operator $\grbplus$ defines how the results should be summarized.
 For example, the $\grbminplus$ semiring uses $\grbplustext$ as the multiplication operator to compute the path length and $\grbmin$ as the addition operator to determine the length of the shortest path.
 The algorithms presented in this paper use a number of non-conventional semirings such as $\grbanysecondi$, $\grbplusfirst$, and $\grbpluspair$. These are summarized in \autoref{tab:semirings} and defined in \autoref{sec:evaluation}.
 
 \input{table-semirings}
 
 \paragraph{Masks and accumulators}
-All \grb operations whose output is a vector or a matrix allow the use of masks to limit the scope of the computation and an accumulator $\grbaccum$, a binary operator that determines how the result of an operation should be applied to its output. %? ~\cite{DBLP:conf/ipps/AzadBG15}
-The semantics of the masks are that the computation should be performed
+All \grb operations whose output is a vector or a matrix allow the use of masks to limit the scope of the computation and an accumulator $\grbaccum$, a binary operator, that determines how the result of an operation should be applied to its output. %? ~\cite{DBLP:conf/ipps/AzadBG15}
+The semantics of masks are that the computation should be performed
 on a given set of nodes (for vector masks) or
 on a given set of edges (for matrix masks).
 The accumulator determines how the results should be applied to the (potentially non-empty) output matrix/vector.
@@ -98,10 +98,10 @@ The \emph{extract subvector} operation $\grbv{u}(\grba{i})$ selects the nodes wi
 
 \paragraph{Assign}
 The \emph{assign} operation has multiple variants.
-The first one assigns a matrix to a submatrix selected by row indices $\grba{i}$ and column indices $\grba{j}$:
+The first assigns a matrix to a submatrix selected by row indices $\grba{i}$ and column indices $\grba{j}$:
 $\grbm{C} \grbmask{\grbm{M}} (\grba{i},\grba{j}) \grbaccumeq{} \grbm{A}$.
-This operator is useful e.g. to ``project'' an induced subgraph back to the original graph.
-The second one assigns a vector to a selected subvector selected by indices $\grba{i}$:
+This operator is useful to ``project'' an induced subgraph back to the original graph.
+The second assigns a vector to a selected subvector selected by indices $\grba{i}$:
 $\grbv{w} \grbmask{\grbv{m}} (\grba{i}) \grbaccumeq{} \grbv{u}$.
 Finally, both the selected submatrix/subvector can be assigned with a scalar value:
 $\grbm{C} \grbmask{\grbm{M}} (\grba{i},\grba{j}) \grbaccumeq{} \grbs{s}$ and
@@ -139,24 +139,24 @@ $$\grbm{C}^{[\grbtransposesymbol]} \grbmask{\grbm{M}} \grbaccumeq{} \grbm{A}^{[\
 % MERGE:   C := (!M .* C) U [M .* (C + AB)]
 % \todo{revise Scott, Tim D, and Tim M}
 
-Masks can be employed for all \grb operations to limit the scope of the computation \wrt the output of the operation.
-Therefore, for operations resulting in a vector, the mask is based on a vector~$\grbm{m}$ and for those resulting in a matrix, it is based on a matrix~$\grbm{M}$.
-Here, we only discuss matrix masks and the definitions can trivially adopted to vectors.
+Masks are used  to limit the scope of \grb operations \wrt the output of the operation.
+For operations resulting in a vector, the mask is based on a vector~$\grbm{m}$. For those resulting in a matrix, it is based on a matrix~$\grbm{M}$.
+Here, we only discuss matrix masks.  Extension to vectors is straightforward.
 
-By default, a mask prescribes that the computation needs to be performed for elements covered by non-zero elements of the mask. % (Gabor) I'm sloppy here... it should be non-zero elements with a non-zero (not explicit zero) value
-However, masks can vary based on multiple aspects:
-\begin{itemize}
+By default, the elements of the mask that exist and are non-zero select corresponding elements of the output matrix that should be computed.  
+There are three variations on the mask that impact the output of a \grb operation:
+\begin{enumerate}
     \item
         Does the computation need to be performed on the elements selected by the mask ($\grbmask{\grbm{M}}$) or the complement of these elements ($\grbmask{\grbneg\grbm{M}}$)?
     \item
-        How are existing elements of the output matrix that fall outside the selected ones treated?
+        How are existing elements of the output matrix treated that fall outside the ones selected by the  mask?
         By default, masks use \emph{merge} semantics, \ie the computation can only effect elements selected by the mask, elements outside the mask are unaffected.
         If \emph{replace} semantics is set, masks annihilate all elements outside the mask. This is denoted with $\grbmaskreplace{\grbm{M}}$.
     \item
         How the elements are selected?
-        By default, masks are \emph{valued}, \ie values in the mask are checked and elements with explicit zero values (\eg 0 for $\grbarithmeticplustimestext$) are not used considered to be part of the mask.
-        To only consider the pattern of the mask, \emph{structural masks} should be used, denoted with $\grbmask{\grbstr{\grbm{M}}}$.
-\end{itemize}
+        By default, masks are \emph{valued}, \ie values in the mask are checked and elements with explicit zero values (\eg 0 for $\grbarithmeticplustimestext$) are not considered to be part of the mask.
+        To only consider the pattern of the mask, \ie the elements of the mask that exist, a \emph{structural mask} should be used, denoted with $\grbmask{\grbstr{\grbm{M}}}$.
+\end{enumerate}
 
 Combining \emph{replace semantics} and \emph{structural masks} is possible and is denoted with
 $\grbmaskreplace{\grbstr{\grbm{M}}}$

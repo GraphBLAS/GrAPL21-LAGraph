@@ -1,19 +1,18 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-In this paper we have introduced the LAGraph library, the rationale behind our design decisions 
-and have established a performance baseline based on the GAP benchmark suite.  This will 
-allow us to track performance enhancements as the library evolves.  We also introduced
-a notation for describing graph algorithms expressed in terms of linear algebra.  It is our hope that this
-notation will lead to a lively discussion leading to a consensus notation the 
+In this paper we introduced the LAGraph library, the rationale behind our design,  
+and a performance baseline based on the GAP benchmark suite.   We also introduced
+a notation for graph algorithms expressed in terms of linear algebra.  We hope this
+notation will lead to a consensus-notation the 
 larger ``Graphs as Linear Algebra'' community might adopt.
 
-This is very much a foundational paper to support our ongoing work one the LAGraph project.  
-We plan to explore Python wrappers for LAGraph that work well with workflows common in the data analytics community.  
-In addition to the GAP benchmark suite, which is focussed on a key set of graph algorithms, we will next 
+This paper defines the foundation for our future work on the LAGraph project.  
+We plan to explore Python wrappers for LAGraph that work well for data analytics workflows.  
+In addition to the GAP benchmarks, which focus on graph algorithms, we will  
 investigate end-to-end workflows based on the LDBC Graphalytics benchmark~\cite{DBLP:journals/pvldb/IosupHNHPMCCSAT16}.
 
 Algorithmically we see a number of research directions to pursue.   With end-to-end workflows, the performance
-of data ingestion heavily impacts overall performance.  We are interested in improving data ingestion performance
-by exploiting the CPUs SIMD instructions~\cite{DBLP:journals/vldb/LangdaleL19}.  We are also interested in how 
-the LAGraph algorithms map onto the GPU using future versions of the GraphBLAS optimized for GPUs.
+of data ingestion heavily impacts performance.  We are interested in improving data ingestion performance
+by exploiting a CPU's SIMD instructions~\cite{DBLP:journals/vldb/LangdaleL19}.  We are also interested in how  
+LAGraph maps onto GPUs using versions of the GraphBLAS optimized for GPUs.
