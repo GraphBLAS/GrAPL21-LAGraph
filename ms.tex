@@ -55,8 +55,8 @@
 
 \begin{document}
 
-\title{LAGraph: A Graph Algorithm and Network Analysis Library for GraphBLAS}
-
+%\title{LAGraph: A Graph Algorithm and Network Analysis Library for GraphBLAS}
+\title{LAGraph: Linear Algebra, Network Analysis Libraries, and the Study of Graph Algorithms}
 \author{ % Tim D modified the ordering: Gabor, then alphabetical
 \IEEEauthorblockN{
     G\'abor Sz\'arnyas\IEEEauthorrefmark{5},
@@ -91,15 +91,20 @@
 \maketitle
 
 \begin{abstract}
-IMHO, the motivation for this work can be summarized as follows (Gabor):
 
-To ensure portability, the primitives of GraphBLAS are quite low-level.
+Graphs and graph algorithms can be expressed in terms of 
+linear algebra. The GraphBLAS are a library of low level building blocks for such algorithms.
+The GraphBLAS target algorithm \emph{developers}.  The LAGraph project
+targets graph algorithm \emph{users} with high-level algorithms common in network
+analysis.   In this paper, we describe 
+the first release of the LAGraph library.  We describe the design decisions behind the
+library, the contents of the library, and performance data using the GAP benchmark suite.
+LAGraph, however, is much more than a library development project.  It is also a
+project to document and analyze the full range of algorithms enabled by the GraphBLAS.  To that end
+we have developed a compact (and hopefully intuitive) notation for describing
+these algorithms.  In this paper, we present that 
+notation with examples from the GAP benchmark suite.  
 
-Formulating efficient algorithms using these primitives requires expertise from the user.
-
-To mitigate this challenge, the LAGraph library provides efficient implementations through a convenient API that can be used by users. Additionally, it demonstrates best practices for algorithm implementers.
-
-design decisions, easy mode/expert mode, GAP algorithms, ...
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -108,7 +113,8 @@ Graph Processing, Graph Algorithms, Graph Analytics, Linear Algebra, GraphBLAS
 
 \input{intro}
 
-\input{fig-architecture}
+%TimM removed this figure.  We are short on space and this doesn't add enough to justify the space it consumes.
+%\input{fig-architecture}
 
 \input{design-decisions}
 

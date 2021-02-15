@@ -1,45 +1,51 @@
 \section{Introduction}
 \label{sec:introduction}
 
-LAGraph is a library of Graph Algorithms based on the GraphBLAS
+Graphs represent networks of relationships. They play a key role in 
+a wide range of applications.   Consequently, numerous libraries of graph algorithms exist 
+such as igraph~\cite{igraph}, NetworkX~\cite{DBLP:reference/snam/X18xv}, and SNAP~\cite{DBLP:journals/tist/LeskovecS16}.
+These libraries let programmers work with graphs without the need to master the art of crafting graph algorithms.
 
-Key contributions:
+There are multiple ways to build libraries of graph algorithms.  One approach
+views graphs in terms of sparse matrices and graph algorithms in terms of 
+linear algebra. This perspective led to the 
+GraphBLAS~\cite{DBLP:conf/hpec/MattsonBBBDFFGGHKLLPPRSWY13,DBLP:conf/hpec/MattsonYMBM17}; 
+a community effort~\cite{GraphBLASforum} to define low level building blocks for graph algorithms as linear algebra.
+The GraphBLAS, however, are for graph algorithm \emph{developers}.  They are too 
+low level for graph algorithm \emph{users}.  To focus on users and the 
+algorithms they require, researchers from the graphBLAS community launched the
+LAGraph project~\cite{DBLP:conf/ipps/MattsonDKBMMY19}.  
 
-\begin{itemize}
-    \item document design decisions for LAGraph
-    \item present a concise notation for \grb algorihms
-    \item algorithms of the GAP benchmark suite~\cite{DBLP:journals/corr/BeamerAP15} used in the IISWC benchmark paper~\cite{DBLP:conf/iiswc/AzadABBCDDDDFGG20}
-    \item improve data ingestion performance, e.g. using SIMD techniques~\cite{DBLP:journals/vldb/LangdaleL19}
-\end{itemize}
+A major goal for the LAGraph project is to produce a library 
+of high quality, production-worthy algorithms constructed on top 
+the GraphBLAS library.  In this paper, we describe the first release of the LAGraph library~\cite{LAGraphRepo}.
+While LAGraph will eventually work with any implementation of the GraphBLAS, it is currently tied to the
+the SuiteSparse GraphBLAS library~\cite{SuiteSparseGraphBLAS}.
 
-Recently, numerous graph processing systems have targeted GPUs such as the \mbox{GraphBLAS Template Library (GBTL)}~\cite{DBLP:conf/ipps/ZhangZLMM16}, Gunrock~\cite{DBLP:journals/topc/WangPDWYWOYLRO17} and \mbox{GraphBLAST}~\cite{DBLP:journals/corr/abs-1908-01407}, as well as FPGAs~\cite{DBLP:journals/corr/abs-1903-06697}.
+In this first release of LAGraph, the range of algorithms is narrow (the algorithms found in the GAP benchmark suite).
+With so few algorithms, we were able to focus our efforts on the key design decisions needed to establish a solid
+foundation we can build on for the future.  Those design decisions 
+and the rationale behind them are a key contribution of this paper.  We also establish a performance baseline for
+our ongoing work with LAGraph with results for the GAP benchmark suite~\cite{DBLP:journals/corr/BeamerAP15}.
 
-However, in the near future we expect even more heterogeneous hardware architectures including graph-specific hardware based on the Programmable Integrated Unified Memory Architecture (PIUMA)~\cite{DBLP:journals/corr/abs-2010-06277}.
-Additionally, graph processing workloads can be offloaded to  machine learning accelerators, \eg
-Tensor Processing Units (TPUs)~\cite{DBLP:conf/isca/JouppiYPPABBBBB17},
-systolic arrays using reconfigurable dataflow architecture~\cite{SambaNova},
-sparse linear algebra-based deep learning accelerators~\cite{Cerebras}.
+The LAGraph project is much more than a library project.   Another goal for the LAGraph project is to 
+create a repository of algorithms based on the GraphBLAS and study them in order to advance the state of the art in 
+Graph algorithms expressed as Linear algebra. To support this goal, we created a concise notation for expressing
+graph algorithms in terms of the GraphBLAS.   As an example of the use of this notation, we use it to describe 
+the algorithms used in the GAP benchmark suite.  We view this notation as a key contribution of this paper.  
 
-Previous \grb design papers:
-theory~\cite{DBLP:conf/hpec/MattsonBBBDFFGGHKLLPPRSWY13},
-C API~\cite{DBLP:conf/hpec/MattsonYMBM17},
-C++ API~\cite{DBLP:conf/ipps/BrockBMMM20},
-distributed API~\cite{DBLP:conf/ipps/BrockBMMMPSS20},
-LAGraph~\cite{DBLP:conf/ipps/MattsonDKBMMY19}
+%
+%Save for Future work: improve data ingestion performance, e.g. using SIMD techniques~\cite{DBLP:journals/vldb/LangdaleL19}
 
-Popular libraries: igraph~\cite{igraph}, NetworkX~\cite{DBLP:reference/snam/X18xv}, SNAP~\cite{DBLP:journals/tist/LeskovecS16} offer very limited or no parallelism.
+%Previous \grb design papers:
+%theory~\cite{DBLP:conf/hpec/MattsonBBBDFFGGHKLLPPRSWY13},
+%C API~\cite{DBLP:conf/hpec/MattsonYMBM17},
+%C++ API~\cite{DBLP:conf/ipps/BrockBMMM20},
+%distributed API~\cite{DBLP:conf/ipps/BrockBMMMPSS20},
+%LAGraph~\cite{DBLP:conf/ipps/MattsonDKBMMY19}
 
-\begin{listing}[h]
-\begin{cplus}
-// This is a minted code block inside a float region
-int main() {
-    return 0; // return zero
-}
-\end{cplus}
-\caption{Example 2}
-\end{listing}
 
-\todo{add two paragraphs with a high-level overview of LAGraph}
+%\todo{add two paragraphs with a high-level overview of LAGraph}
 
-\footnote{A non peer-reviewed comparison of 6 popular graph algorithms libraries is available at
-\url{https://www.timlrx.com/blog/benchmark-of-popular-graph-network-packages-v2}.}
+%\footnote{A non peer-reviewed comparison of 6 popular graph algorithms libraries is available at
+%\url{https://www.timlrx.com/blog/benchmark-of-popular-graph-network-packages-v2}.}
