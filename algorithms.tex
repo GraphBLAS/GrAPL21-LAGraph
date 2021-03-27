@@ -21,11 +21,18 @@ The push-only BFS is shown in
 
 The GraphBLAS BFS relies on the $\grbanysecondi$ %ANY-SECONDI
 semiring to compute a single step,
-$\grbv{q} \grbmask{\grbneg \grbstr{\grbv{p}}} = \grbv{q}\grbt\grbm{A}$, where $\grbv{q}$ is the current frontier
+$\grbv{q}\grbt \grbmaskreplace{\grbneg \grbstr{\grbv{p}\grbt}}  = \grbv{q}\grbt\grbm{A}$, where $\grbv{q}$ is the current frontier
+%$\grbv{q} \grbmask{\grbneg \grbstr{\grbv{p}}} = \grbv{q}\grbt\grbm{A}$, where $\grbv{q}$ is the current frontier
 (using $\grbv{q}$ as short for queue),
 $\grbv{p}$ is the parent vector, and $\grbm{A}$ is the adjacency matrix.
-This step assigns the parents of newly nodes, which do not yet have a parent,
-using the complemented structural mask $\grbmask{\grbneg \grbstr{\grbv{p}}}$.
+The mask is a \emph{complimented structural mask} which means the mask corresponds to the 
+empty elements of the mask vector.   Replace semantics are indicated (due to the \emph{r} in the mask expression)
+so any elements of the vector other than those selected by the mask are deleted.
+The result is the assignment to the parent vector on line 8 updates the vector with the parents of the the newly visited nodes.
+%
+%This step assigns the parents of newly visited nodes, which do not yet have a parent,
+%using the complemented structural mask with replace semantics $\grbmaskreplace{\grbneg \grbstr{\grbv{p}}}$.
+%using the complemented structural mask $\grbmask{\grbneg \grbstr{\grbv{p}}}$.
 
 Consider a matrix multiply for conventional linear algebra, where the $\grbplus$ %PLUS
 monoid sums a set of $t$ entries to obtain a single scalar for computing

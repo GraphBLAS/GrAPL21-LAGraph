@@ -150,7 +150,7 @@ There are three variations on the mask that impact the output of a \grb operatio
         Does the computation need to be performed on the elements selected by the mask ($\grbmask{\grbm{M}}$) or the complement of these elements ($\grbmask{\grbneg\grbm{M}}$)?
     \item
         How are existing elements of the output matrix treated that fall outside the ones selected by the  mask?
-        By default, masks use \emph{merge} semantics, \ie the computation can only effect elements selected by the mask, elements outside the mask are unaffected.
+        By default, masks use \emph{merge} semantics, \ie the computation can only affect elements selected by the mask, elements outside the mask are unaffected.
         If \emph{replace} semantics is set, masks annihilate all elements outside the mask. This is denoted with $\grbmaskreplace{\grbm{M}}$.
     \item
         How the elements are selected?
@@ -158,7 +158,7 @@ There are three variations on the mask that impact the output of a \grb operatio
         To only consider the pattern of the mask, \ie the elements of the mask that exist, a \emph{structural mask} should be used, denoted with $\grbmask{\grbstr{\grbm{M}}}$. %and $\grbmask{\grbneg\grbstr{\grbm{M}}}$ for negated masks.
 \end{enumerate}
 
-Operations can use \emph{replace semantics} and \emph{structural masks} at the same, denoted with
+Operations can use \emph{replace semantics} and \emph{structural masks} at the same time, denoted with
 $\grbmaskreplace{\grbstr{\grbm{M}}}$
 
 \subsection{Methods}

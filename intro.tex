@@ -3,11 +3,12 @@
 
 Graphs represent networks of relationships. They play a key role in 
 a wide range of applications.   Consequently, numerous graph libraries exist 
-such as igraph~\cite{igraph}, NetworkX~\cite{DBLP:reference/snam/X18xv}, SNAP~\cite{DBLP:journals/tist/LeskovecS16}, and JGraphT~\cite{DBLP:journals/toms/MichailKNS20}.
+such as igraph~\cite{igraph}, NetworkX~\cite{DBLP:reference/snam/X18xv}, and SNAP~\cite{DBLP:journals/tist/LeskovecS16}.
+%, and JGraphT~\cite{DBLP:journals/toms/MichailKNS20}.
 These libraries let programmers work with graphs without the need to master the art of crafting graph algorithms.
 
 There are multiple ways to build libraries of graph algorithms.  One approach
-views graphs in terms of sparse matrices and graph algorithms in terms of 
+views graphs as sparse matrices and graph algorithms as
 linear algebra. This perspective led to the 
 GraphBLAS~\cite{DBLP:conf/hpec/MattsonBBBDFFGGHKLLPPRSWY13,DBLP:conf/hpec/MattsonYMBM17}; 
 a community effort~\cite{GraphBLASforum} to define low-level building blocks for graph algorithms as linear algebra.
@@ -16,7 +17,7 @@ low-level for graph algorithm \emph{users}.  To focus on users and the
 algorithms they require, we launched the
 LAGraph project~\cite{DBLP:conf/ipps/MattsonDKBMMY19}.  
 
-The LAGraph project will produce a library 
+LAGraph is a library 
 of high quality, production-worthy algorithms constructed on top of
 the GraphBLAS.  In this paper, we describe the first release of LAGraph~\cite{LAGraphRepo}.
 While LAGraph will eventually work with any implementation of the GraphBLAS, it is currently tied to
@@ -27,11 +28,11 @@ This restricted scope allowed us to focus on the key design decisions needed to 
 foundation for the future.  Those design decisions, the rationale behind them, and a performance baseline 
 using the GAP benchmark suite~\cite{DBLP:journals/corr/BeamerAP15} are key contributions of this paper.   
 
-The LAGraph project is much more than a library project.   Another goal for the project is to 
-create a repository of algorithms based on the GraphBLAS and study them to advance the state of the art in 
+The LAGraph project is more than a library project.   It is also
+a repository of algorithms based on the GraphBLAS to help advance the state of the art in 
 Graph algorithms expressed as Linear algebra. To support this goal, we created a concise notation for expressing
 graph algorithms in terms of the GraphBLAS.   As an example of this notation in action, we use it to describe 
-the algorithms used in the GAP benchmark suite.  We view this notation as a key contribution of this paper.  
+the algorithms used in the GAP benchmark suite.  This notation as a key contribution of this paper.  
 
 %
 %Save for Future work: improve data ingestion performance, e.g. using SIMD techniques~\cite{DBLP:journals/vldb/LangdaleL19}
