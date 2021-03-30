@@ -7,8 +7,8 @@
 \label{sec:bfs}
 
 The breadth-first search (BFS)
-builds on the observation that a vector-matrix multiplication $\grbv{f}\grbt\grbm{A}$ expresses
-the navigation from the nodes selected by vector $\grbv{f}$ in the graph represented
+builds on the observation that vector-matrix multiplication $\grbv{f}\grbt\grbm{A}$ expresses 
+navigation from the nodes selected by vector $\grbv{f}$ in the graph represented
 by $\grbm{A}$.
 The direction-optimizing push/pull BFS \cite{DBLP:conf/sc/BeamerAP12} is simple
 to express in GraphBLAS \cite{DBLP:conf/icpp/YangBO18}.  If $\grbm{A}$ is held by row,
@@ -21,9 +21,8 @@ The push-only BFS is shown in
 
 The GraphBLAS BFS relies on the $\grbanysecondi$ %ANY-SECONDI
 semiring to compute a single step,
-$\grbv{q}\grbt \grbmaskreplace{\grbneg \grbstr{\grbv{p}\grbt}}  = \grbv{q}\grbt\grbm{A}$, where $\grbv{q}$ is the current frontier
+$\grbv{q}\grbt \grbmaskreplace{\grbneg \grbstr{\grbv{p}\grbt}}  = \grbv{q}\grbt\grbm{A}$, where $\grbv{q}$ is the current frontier,
 %$\grbv{q} \grbmask{\grbneg \grbstr{\grbv{p}}} = \grbv{q}\grbt\grbm{A}$, where $\grbv{q}$ is the current frontier
-(using $\grbv{q}$ as short for queue),
 $\grbv{p}$ is the parent vector, and $\grbm{A}$ is the adjacency matrix.
 The mask is a \emph{complimented structural mask} which means the mask corresponds to the 
 empty elements of the mask vector.   Replace semantics are indicated (due to the \emph{r} in the mask expression)

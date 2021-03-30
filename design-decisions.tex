@@ -1,14 +1,13 @@
 \section{Design Decisions}
 \label{sec:decisions}
 
-LAGraph sits between algorithm developers, GraphBLAS implementations, and end users who want to use graph algorithms.
-Our overarching design principle is we want LAGraph to be easy to use,
-but also flexible enough to handle advanced use cases.
+LAGraph is for users who want to use graph algorithms that run on top of the GraphBLAS.  
+Our overarching design goal is ease of use with flexibility to handle advanced use-cases.
 We don't wish to compromise performance, but when the tradeoff between convenience and performance
 is unavoidable, we offer both and let the user choose.
-LAGraph includes a set of data structures, utility functions, and conventions
-that make it convenient for algorithm developers to write algorithms on top of GraphBLAS.
-By following these conventions, end users get an approachable API and consistent user experience.
+LAGraph includes a set of data structures and utility functions 
+that make it convenient for developers to write algorithms on top of GraphBLAS with 
+an approachable API and consistent user experience.
 
 \subsection{Core data structure}
 
