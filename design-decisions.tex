@@ -9,8 +9,6 @@ LAGraph includes a set of data structures and utility functions
 that make it convenient for developers to write algorithms on top of GraphBLAS with 
 an approachable API and consistent user experience.
 
-\subsection{Core data structure}
-
 \begin{listing}
 \begin{cplus}
 typedef struct LAGraph_Graph_struct
@@ -41,6 +39,8 @@ LAGraph_Property_AT(G, msg);  |$\label{line:ComputeTranspose}$|// compute/cache
 \caption{{\tt LAGraph\_Graph} data structure and methods.}
 \label{Lst.graph}
 \end{listing}
+
+\subsection{Core data structure}
 
 The main data structure in LAGraph is the \verb'LAGraph_Graph' which consists of primary components
 and cached properties. The data structure is not opaque, providing the user with full ability to access and
