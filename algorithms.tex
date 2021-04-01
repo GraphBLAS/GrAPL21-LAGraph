@@ -24,7 +24,7 @@ semiring to compute a single step,
 $\grbv{q}\grbt \grbmaskreplace{\grbneg \grbstr{\grbv{p}\grbt}}  = \grbv{q}\grbt\grbm{A}$, where $\grbv{q}$ is the current frontier,
 %$\grbv{q} \grbmask{\grbneg \grbstr{\grbv{p}}} = \grbv{q}\grbt\grbm{A}$, where $\grbv{q}$ is the current frontier
 $\grbv{p}$ is the parent vector, and $\grbm{A}$ is the adjacency matrix.
-The mask is a \emph{complimented structural mask} which means the mask corresponds to the 
+The mask is a \emph{complemented structural mask} which means the mask corresponds to the 
 empty elements of the mask vector.   Replace semantics are indicated (due to the \emph{r} in the mask expression)
 so any elements of the vector other than those selected by the mask are deleted.
 The result is the assignment to the parent vector on line 8 updates the vector with the parents of the the newly visited nodes.
@@ -64,16 +64,16 @@ parent $k$.
 
 \input{algorithms/bc}
 %
-The vertex betweenness-centrality metric is based on the number of
+The vertex betweenness centrality metric is based on the number of
 shortest paths through any given node,
 $ \sum_{s \ne i \ne t} {\sigma (s, t|i)}/{\sigma(s,t)}, $
 where $\sigma(s,t)$ is the total number of shortest paths from node $s$ to $t$,
 and $\sigma(s,t|i)$ is the total number of shortest paths from node $s$ to $t$
 that pass through node $i$.  This is expensive to compute, so in practice,
-a subset of source nodes are chosen at random (a {\em batch}), of size $ns$.
+a subset of source nodes are chosen at random (a {\em batch}), of size $\mathit{ns}$.
 
 Like the BFS, direction-optimization is incredibly simple to add to the LAGraph
-algorithm for batched betweenness-centrality (BC).
+algorithm for batched betweenness centrality (BC).
 It only requires a simple heuristic to determine which
 direction to use, followed by masked matrix-matrix multiplication with the
 matrix or its transpose: $\grbm{F} \grbmask{\grbneg \grbstr{\grbm{P}}} = \grbm{F}\grbm{B}\grbt$ (the pull) or $\grbm{F}
@@ -82,8 +82,8 @@ the graph and $\grbm{B} = \grbm{A}\grbt$ is its explicit transpose, $\grbm{F}$ i
 complemented structural mask $\grbneg \grbstr{\grbm{P}}$ is the set of unvisited nodes.  The multiplication
 $\grbm{F} \grbm{B}\grbt$ relies on the descriptor to represent the transpose of $\grbm{B}$, which is not
 explicitly transposed.  In the backward phase, the pull step is $\grbm{W} = \grbm{W} \grbm{A}\grbt$ while
-the push is $\grbm{W} = \grbm{W} \grbm{B}$, where $\grbm{W}$ is the $ns$-by-$n$ matrix in which centrality is
-accumulated (where $ns=4$ is a typical batch size).
+the push is $\grbm{W} = \grbm{W} \grbm{B}$, where $\grbm{W}$ is the $\mathit{ns}$-by-$n$ matrix in which centrality is
+accumulated (where $\mathit{ns}=4$ is a typical batch size).
 
 To simplify the presentation of the entire BC algorithm, \autoref{alg:bc} does
 not show the direction-optimization.  It is the same transformation as the pair
@@ -99,7 +99,7 @@ of BFS algorithms, where the push-only step (line 5 of
 PageRank (PR) computes the importance of each node as a recursively-defined
 metric: a web page is important if important pages link to it.
 \autoref{alg:pagerank} shows the GraphBLAS implementation of PR as specified in
-the GAP Benchmark.  It uses the $\grbplussecond$ semiring, where
+the GAP benchmark.  It uses the $\grbplussecond$ semiring, where
 $\grboperator{second}(x,y)=y$, so it can ignore any edge weights in the input
 matrix.  The PR in GAP does not properly handle dangling vertices in the graph.
 The Graphalytics benchmark has a PageRank variant which avoids this
@@ -110,11 +110,11 @@ version to compare its performance with the GAP benchmark algorithm
 \input{algorithms/pagerank}
 
 %-------------------------------------------------------------------------------
-\subsection{Single-Source Shortest-Paths (SSSP)}
+\subsection{Single-Source Shortest Paths (SSSP)}
 %-------------------------------------------------------------------------------
 \label{sec:sssp}
 
-A Delta-Stepping Single-Source-Shortest-Path algorithm in GraphBLAS is shown in
+A Delta-Stepping Single-Source Shortest Paths algorithm in GraphBLAS is shown in
 \autoref{alg:sssp-delta-stepping}.  It relies on the $\grbminplus$ semiring.
 Since it is a fairly complex algorithm, refer to
 \cite{DBLP:conf/ipps/SridharBMSLM19} for a description of the method.
@@ -139,7 +139,7 @@ $\grbpluspair$ semiring.  Internally, a dot product method is used in SS:GrB,
 because $\grbm{U}$ is transposed via the descriptor.  The $\grboperator{pair}$
 is the simple function $\grboperator{pair}(x,y)=1$.  When used in a semiring,
 it acts like the $\grboperator{times}$ operator of the conventional semiring,
-except that it can ignore the values of its inputs and treat them both as 1.
+except that it can ignore the values of its inputs and treat them both as~1.
 This semiring is useful for structural computations, such as triangle counting,
 when the edge weights of a graph may be present but should be ignored in a
 particular algorithm.
@@ -154,7 +154,7 @@ is written by Zhang, Azad, and Bulu{\c{c}}
 \cite{ZHANG202014,DBLP:conf/ppsc/ZhangAH20}.  The method maintains a forest of
 trees represented by a parent vector, and iteratively merges trees until no
 more merging is possible.  The method as shown in \autoref{alg:fastsv} is a
-simplified variant that it operates on the entire graph.  In the LAGraph
+simplified variant that operates on the entire graph.  In the LAGraph
 version, a subgraph is constructed first, and the method finds the connected
 components of the subgraph, and then operates on the entire graph.
 \input{algorithms/fastsv}

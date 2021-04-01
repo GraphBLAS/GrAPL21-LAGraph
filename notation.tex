@@ -20,7 +20,7 @@ Compared to $\grbm{A}$, matrix~$\grbm{A}\grbt$ contains the edges in the reverse
 
 \emph{Vectors} can be used to encode data for nodes, \eg $\grbv{u} \in \grbbool^{|V|}$ can be used to select a subset of nodes.
 For vectors, $\grbm{u}$ denotes a column vector and $\grbm{u}\grbt$ denotes a row vector.
-Vectors and matrices can be defined over different types, \eg a ($\grbuint$) matrix can encode the number of paths between two nodes, while a floating point ($\grbdouble$) matrix can encode edge weights.
+Vectors and matrices can be defined over different types, \eg an unsigned integer ($\grbuint$) matrix can encode the number of paths between two nodes, while a floating point ($\grbdouble$) matrix can encode edge weights.
 
 In practice, adjacency matrices representing graphs are sparse, \ie most of their elements are \emph{zero}, lending themselves to compressed representations such as CSR/CSC.
 The \emph{zero elements} take their values during operations based on the identity of the semiring's $\grbplus$ operation (see below).
@@ -39,7 +39,7 @@ The algorithms presented in this paper use a number of non-conventional semiring
 \input{table-semirings}
 
 \paragraph{Masks and accumulators}
-All \grb operations whose output is a vector or a matrix allow the use of masks to limit the scope of the computation and an accumulator $\grbaccum$, a binary operator, that determines how the result of an operation should be applied to its output. %? ~\cite{DBLP:conf/ipps/AzadBG15}
+All \grb operations whose output is a vector or a matrix allow the use of masks to limit the scope of the computation and an accumulator $\grbaccum$, a binary operator, that determines how the result of an operation should be applied to their output. %? ~\cite{DBLP:conf/ipps/AzadBG15}
 The semantics of masks is that the computation should be performed
 on a given set of nodes (for vector masks) or
 on a given set of edges (for matrix masks).
@@ -62,9 +62,9 @@ in the edges of $\grbm{A}$ and traverses from their endpoints
 using the edges of $\grbm{B}$.
 The result matrix~$\grbm{C}$ has elements $\grbm{C}_{i,j}$ representing the summarized paths (\eg number of paths, shortest paths) between start node $i$ in the graph of $\grbm{A}$ and end node $j$ in the graph of $\grbm{B}$.
 
-The \emph{vector-matrix multiplication} operation $\grbv{u}\grbt \grbplustimes \grbm{A}$ performs navigation starting from the nodes selected in vector~$\grbv{u}$ among the edges of matrix~$\grbm{A}$.
+The \emph{vector-matrix multiplication} operation $\grbv{u}\grbt \grbplustimes \grbm{A}$ performs navigation starting from the nodes selected in vector~$\grbv{u}$ along the edges of matrix~$\grbm{A}$.
 The result vector~$\grbm{w}$ contains the set of reached nodes with the values computed on the semiring (combining the source node values with the outgoing edge values using $\grbtimes$ then summarizing these for each target node using $\grbplus$).
-The \emph{matrix-vector multiplication} operation $\grbm{A} \grbplustimes \grbv{u}$ performs navigation in the reverse direction of the edges of $\grbm{A}$.
+The \emph{matrix-vector multiplication} operation $\grbm{A} \grbplustimes \grbv{u}$ performs navigation in the reverse direction on the edges of~$\grbm{A}$.
 
 
 \paragraph{Element-wise addition}
@@ -72,7 +72,7 @@ The \emph{matrix-vector multiplication} operation $\grbm{A} \grbplustimes \grbv{
 The \emph{element-wise addition} operations
 $\grbm{u} \grbewiseadd{\grbgenericop} \grbm{v}$ and
 $\grbm{A} \grbewiseadd{\grbgenericop} \grbm{B}$
-applies the operator $\grbgenericop$ on the elements selected by the \emph{union of the structures of its inputs},
+apply the operator $\grbgenericop$ on the elements selected by the \emph{union of the structures of its inputs},
 \ie nodes/edges which are present in at least one of the input matrices.
 
 \paragraph{Element-wise multiplication}
@@ -80,7 +80,7 @@ applies the operator $\grbgenericop$ on the elements selected by the \emph{union
 The \emph{element-wise multiplication} operation
 $\grbm{u} \grbewisemult{\grbgenericop} \grbm{v}$ and
 $\grbm{A} \grbewisemult{\grbgenericop} \grbm{B}$
-applies the operator $\grbgenericop$ on the elements selected by the \emph{intersection of the structures of its inputs},
+apply the operator $\grbgenericop$ on the elements selected by the \emph{intersection of the structures of its inputs},
 \ie nodes/edges which are present in both inputs.
 
 \paragraph{Extract}
@@ -100,8 +100,8 @@ The \emph{extract subvector} operation $\grbv{u}(\grba{i})$ selects the nodes wi
 The \emph{assign} operation has multiple variants.
 The first assigns a matrix to a submatrix selected by row indices $\grba{i}$ and column indices $\grba{j}$:
 $\grbm{C} \grbmask{\grbm{M}} (\grba{i},\grba{j}) \grbaccumeq{} \grbm{A}$.
-This operator is useful to ``project'' an induced subgraph back to the original graph.
-The second assigns a vector to a selected subvector selected by indices $\grba{i}$:
+This operator is useful to project an induced subgraph back to the original graph.
+The second assigns a vector to a subvector selected by indices $\grba{i}$:
 $\grbv{w} \grbmask{\grbv{m}} (\grba{i}) \grbaccumeq{} \grbv{u}$.
 Finally, both the selected submatrix/subvector can be assigned with a scalar value:
 $\grbm{C} \grbmask{\grbm{M}} (\grba{i},\grba{j}) \grbaccumeq{} \grbs{s}$ and
@@ -111,7 +111,7 @@ In all cases, the scope of the assignment can be further constrained using masks
 %\paragraph{Subassign} ?
 
 \paragraph{Apply and select}
-The \emph{apply} and \emph{select} operations evaluate a unary operator $f$ with an optional input $k$ (the \emph{thunk}) on all elements of the input matrix/vector. When evaluated on a given element, function $\mathit{f}$ can access the indices of the element, allowing the operation to be constrained on e.g. the lower triangle of a matrix.
+The \emph{apply} and \emph{select} operations evaluate a unary operator $f$ with an optional input $k$ (the \emph{thunk}) on all elements of the input matrix/vector. When evaluated on a given element, function $\mathit{f}$ can access the indices of the element, allowing the operation to be constrained on regions of the matrix such as its lower triangle.
 In the case of \emph{apply}, denoted with $\grbf{f}{\grbm{A}, \grbs{k}}$ and $\grbf{f}{\grbv{u}, \grbs{k}}$, the resulting elements are returned as part of the output.
 The \emph{select} operation requires $f$ to be a boolean function and zeros out elements that return $\grbfalse$.
 Intuitively,
@@ -139,7 +139,7 @@ $$\grbm{C}^{[\grbtransposesymbol]} \grbmask{\grbm{M}} \grbaccumeq{} \grbm{A}^{[\
 % MERGE:   C := (!M .* C) U [M .* (C + AB)]
 % \todo{revise Scott, Tim D, and Tim M}
 
-Masks are used  to limit the scope of \grb operations \wrt the output of the operation.
+Masks are used  to limit the scope of \grb operations \wrt their outputs.
 For operations resulting in a vector, the mask is based on a vector~$\grbm{m}$. For those resulting in a matrix, it is based on a matrix~$\grbm{M}$.
 Here, we only discuss matrix masks.  Extension to vectors is straightforward.
 

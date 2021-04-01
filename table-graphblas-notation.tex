@@ -81,10 +81,10 @@
         %       Maybe also add nvals, nrows, ... since we use those in the algorithms.
         Operations can be modified via a descriptor;
         matrices can be transposed ($\grbm{B}\grbt$),
-        the mask can be complemented, and
+        the mask can be complemented ($\grbm{C}\grbmask{\neg \grbm{M}}$), and
         the mask can be valued (shown above) or structural ($\grbm{C}\grbmask{\grbstr{\grbm{M}}}$).
         A structural mask can also be complemented ($\grbm{C}\grbmask{\grbneg\grbstr{\grbm{M}}}$).
-        The result can be cleared after using it as input to the mask/accumulator step ($\grbm{C}\grbmaskreplace{\grbm{M}}$).
+        The result can be cleared (replaced) after using it as input to the mask/accumulator step ($\grbm{C}\grbmaskreplace{\grbm{M}}$).
         Not all methods are listed (creating new operators, monoids, and semirings, clearing a matrix/vector, etc.).
         % For the {\tt assign} operation, the dimensions of the masks are the same as the output's: $\grbdim{\grbm{M}} = \grbdim{\grbm{C}}$ and $\grbdim{\grbv{m}} = \grbdim{\grbv{w}}$.
         % For the {\tt subassign} operation, the dimensions of the masks are the same as the submasks: $\grbnrows{\grbm{M}} = |\grba{i}|, \grbncols{\grbm{M}} = |\grba{j}|$ for matrices and $\grbdim{\grbv{m}} = |i|$ for vectors.

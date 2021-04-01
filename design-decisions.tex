@@ -3,7 +3,7 @@
 
 LAGraph is for users who want to use graph algorithms that run on top of the GraphBLAS.  
 Our overarching design goal is ease of use with flexibility to handle advanced use-cases.
-We don't wish to compromise performance, but when the tradeoff between convenience and performance
+We do not wish to compromise performance, but when the tradeoff between convenience and performance
 is unavoidable, we offer both and let the user choose.
 LAGraph includes a set of data structures and utility functions 
 that make it convenient for developers to write algorithms on top of GraphBLAS with 
@@ -42,7 +42,7 @@ LAGraph_Property_AT(G, msg);  |$\label{line:ComputeTranspose}$|// compute/cache
 \label{Lst.graph}
 \end{listing}
 
-The primary data structure in LAGraph is the \verb'LAGraph_Graph' which consists of primary components
+The main data structure in LAGraph is the \verb'LAGraph_Graph' which consists of primary components
 and cached properties. The data structure is not opaque, providing the user with full ability to access and
 modify all internal components. This contrasts with the opaque objects in the GraphBLAS.  This data structure is 
 shown at the top of Listing~\ref{Lst.graph} and defined ultimately on Line~\ref{line:LAGraph_Graph}.
@@ -66,7 +66,7 @@ Because the Graph object is not opaque, any piece of code may set the transpose 
 computes the transpose as part of its normal logic, it could directly set \verb'G->AT'.
 The expectation is that the Graph object will always remain consistent.
 If \verb'G->A' is modified, all cached properties must be either be set as unknown or modified to reflect the change.
-Properties which are not known are set to \verb'NULL' or \verb'LAGRAPH_BOOLEAN_UNKNOWN' in the case of Boolean properties.
+Properties which are not known are set to \verb'NULL' or \verb'LAGRAPH_BOOLEAN_UNKNOWN' in the case of boolean properties.
 This expectation is a convention that all LAGraph algorithm implementers are expected to follow.
 
 
@@ -81,11 +81,11 @@ requirements to achieve that goal.
 Algorithms targeting the Basic mode typically have limited options. Often, there will only be one function for
 a given algorithm. Under the hood, that single algorithm might take different paths depending on the shape or
 size of the input graph. The idea is that a basic user wants to compute PageRank or Betweenness Centrality,
-but doesn't want to have to understand the five different ways to compute them. They simply want the correct answer.
+but does not want to have to understand the five different ways to compute them. They simply want the correct answer.
 
 Algorithms targeting the Advanced mode are often highly specialized implementations of an algorithm. The Advanced
-mode user is expected to understand details such as push-pull and batch mode and why different techniques are
-better for each graph. Advanced mode algorithms are very strict in their input. If the input doesn't match the
+mode user is expected to understand details such as push-pull~\cite{DBLP:conf/icpp/YangBO18} and batch mode and why different techniques are
+better for each graph. Advanced mode algorithms are very strict in their input. If the input does not match the
 expected kind, an error will be raised.
 
 Advanced mode algorithms will also raise an error if a cached property is needed by an algorithm, but is not
@@ -105,7 +105,7 @@ Algorithms in LAGraph follow a general calling convention.
 \begin{cplus}
 int algorithm
 (
-    // outputs:
+    // outputs
     TYPE *out1,
     TYPE *out2,
     ...
@@ -132,15 +132,20 @@ The return value is always an int with the following meaning:
 The meaning of a given error or warning value is algorithm-specific
 and should be listed in the documentation for the algorithm.
 
-Outputs appear first and are passed by reference. A pointer should be created by the caller, but
-memory will be allocated by the algorithm. If the output is not needed, a \verb'NULL' is passed and the
-algorithm will not return that output.
+We distinguish three types of arguments:
 
-Input/Output arguments are passed by value. The expectation is that the object will be modified.
-This supports things like batch mode in which a frontier is updated and returned to the caller.
-It also supports Basic mode algorithms which may modify a Graph object by adding cached properties.
+\begin{itemize}
+    \item 
+    Outputs appear first and are passed by reference. A pointer should be created by the caller, but
+    memory will be allocated by the algorithm. If the output is not needed, a \verb'NULL' is passed and the
+    algorithm will not return that output.
 
-Inputs are passed by value and should never be changed by the algorithm.
+    \item Input/Output arguments are passed by value. The expectation is that the object will be modified.
+    This supports features such as batch mode in which a frontier is updated and returned to the caller.
+    It also supports Basic mode algorithms which may modify a Graph object by adding cached properties.
+
+    \item Inputs are passed by value and should never be changed by the algorithm.
+\end{itemize}
 
 The final argument of any LAGraph algorithm holds the error message. This must be \verb'char[]' of
 size \verb'LAGRAPH_MSG_LEN'. When the algorithm returns an error or a warning, a message may be placed in
